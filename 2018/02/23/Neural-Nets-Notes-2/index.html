@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CS231n、DL、CV," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Neural Nets notes 2内容结构：  设置数据和模型  数据预处理 权重初始化 批量归一化 正则化（L2/L1/Maxnorm/Dropout）   损失函数 总结  设置数据和模型在前面的章节中，我们介绍了单神经元模型，通过计算点乘并输入给非线性函数（激活函数），而神经网络就是将多个神经元组织成各个层。合起来，这些选择定义新的得分函数，该得分函数从先前我们已经看多的线性映射那儿扩展">
+<meta name="keywords" content="CS231n、DL、CV">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neural Nets Notes-2">
+<meta property="og:url" content="http://yoursite.com/2018/02/23/Neural-Nets-Notes-2/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Neural Nets notes 2内容结构：  设置数据和模型  数据预处理 权重初始化 批量归一化 正则化（L2/L1/Maxnorm/Dropout）   损失函数 总结  设置数据和模型在前面的章节中，我们介绍了单神经元模型，通过计算点乘并输入给非线性函数（激活函数），而神经网络就是将多个神经元组织成各个层。合起来，这些选择定义新的得分函数，该得分函数从先前我们已经看多的线性映射那儿扩展">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn2/prepro1.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn2/prepro2.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn2/cifar10pca.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn2/dropout.jpeg">
+<meta property="og:updated_time" content="2018-03-04T05:56:50.327Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Neural Nets Notes-2">
+<meta name="twitter:description" content="Neural Nets notes 2内容结构：  设置数据和模型  数据预处理 权重初始化 批量归一化 正则化（L2/L1/Maxnorm/Dropout）   损失函数 总结  设置数据和模型在前面的章节中，我们介绍了单神经元模型，通过计算点乘并输入给非线性函数（激活函数），而神经网络就是将多个神经元组织成各个层。合起来，这些选择定义新的得分函数，该得分函数从先前我们已经看多的线性映射那儿扩展">
+<meta name="twitter:image" content="http://cs231n.github.io/assets/nn2/prepro1.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Hipanda'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/02/23/Neural-Nets-Notes-2/"/>
+
+
+
+
+
+  <title>Neural Nets Notes-2 | Hexo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9996a598fab67114f38e4c027f3f0092";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/23/Neural-Nets-Notes-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Neural Nets Notes-2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-23T15:55:07+08:00">
+                2018-02-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/02/23/Neural-Nets-Notes-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/02/23/Neural-Nets-Notes-2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Neural-Nets-notes-2"><a href="#Neural-Nets-notes-2" class="headerlink" title="Neural Nets notes 2"></a>Neural Nets notes 2</h1><p>内容结构：</p>
+<ul>
+<li><p>设置数据和模型</p>
+<ul>
+<li>数据预处理</li>
+<li>权重初始化</li>
+<li>批量归一化</li>
+<li>正则化（L2/L1/Maxnorm/Dropout）</li>
+</ul>
+</li>
+<li>损失函数</li>
+<li>总结</li>
+</ul>
+<h2 id="设置数据和模型"><a href="#设置数据和模型" class="headerlink" title="设置数据和模型"></a>设置数据和模型</h2><p>在前面的章节中，我们介绍了单神经元模型，通过计算点乘并输入给非线性函数（激活函数），而神经网络就是将多个神经元组织成各个层。合起来，这些选择定义新的得分函数，该得分函数从先前我们已经看多的线性映射那儿扩展而来。特别的，一个神经网络执行一系列线性和非线性交织的操作。这一节，我们将会讨论设计神经网络上的选择，比如数据预处理，权重初始化以及损失函数。</p>
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p>关于数据预处理我们有3个常用的符号，数据矩阵X，假设其尺寸是[N x D]（N是数据样本的数量，D是数据的维度）。</p>
+<p><strong>均值减法</strong>是最常用的数据预处理的方法。它涉及到减去数据中每个单独特征的平均值，并且具有以每个维度为中心围绕原点的数据云的几何解释。 在numpy中，这个操作将被实现为：X - = np.mean（X，axis = 0）。 对于具体的图像，为了方便起见，从所有像素中减去单个值是常见的（例如X - = np.mean（X）），或者在三个颜色通道上单独这样做。</p>
+<p><strong>归一化</strong>指的是归一化数据的各个的维度，使每个维度的数值范围大致相同。有两种方法来归一化。一种是每个维度的数据先做零中心化，然后再除以他们的标准差。另一种归一化是对每一个维度进行归一化从而得到最大值是1最小值是-1的操作。只有当特征有不同的取值范围，同时这些特征对于算法而言具有同等重要性。然而在图片处理这块，由于每个像素点的取值范围都为（0~255），所以不是必须要做归一化。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn2/prepro1.jpeg" alt=""><br>一般的数据预处理流程。左边：原始的二维数据。中间：数据的每一个维度经过零中心化。数据现在以原点为中心。右边：每一维度的数据通过标注差进行放缩。红色的线指出了数据各维度的数值范围，在中间的零中心化数据的数值范围不同，但在右边归一化数据中数值范围相同。</p>
+<hr>
+<p><strong>PCA和白化</strong>是另外一种形式的预处理。在此过程中，数据先进行如上所述的中心化。然后，计算协方差矩阵，它展示了数据中的相关性结构。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># Assume input data matrix X of size [N x D]</span><br><span class="line">X -= np.mean(X, axis = 0) # zero-center the data (important)</span><br><span class="line">cov = np.dot(X.T, X) / X.shape[0] # get the data covariance matrix</span><br></pre></td></tr></table></figure>
+<p>协方差矩阵的(i,j)元素代表的是数据的第i和第j维度的协方差，特别的，对角线元素代表的是方差。进一步，协方差矩阵是对称的且是半正定的。我们可以对协方差矩阵进行奇异值分解。</p>
+<p><code>U,S,V = np.linalg.svd(cov)</code></p>
+<p>其中，U的列代表的是特征向量，而S是特征值平哥的数组。为了使数据没有相关性，我们将原始的数据（零中心化）投影到特征向量组成的基上。</p>
+<p><code>Xrot = np.dot(X, U) # decorrelate the data</code></p>
+<p>注意到U的列向量是正交向量的集合（长为1，相互正交），所以可以被看成是基向量。因此投影可以看成是数据的旋转，将坐标轴转换成特征向量。如果计算旋转后的数据的协方差矩阵会发现该矩阵是对角矩阵。<code>np.linalg.svd</code>的一个好的性质是，它返回的U中，特征向量是按照特征值的大小排序的。也就是说，我们可以通过使用前几个特征向量而丢弃没有包含方差的数据的维度，起到数据降维的操作。也被称为主成分分析（简称PCA）降维。</p>
+<p><code>Xrot_reduced = np.dot(X, U[:,:100]) # Xrot_reduced becomes [N x 100]</code></p>
+<p>经过上述这番操作，我们将原始数据集从大小[NxD]变成了[Nx100]，保留下数据所含最大方差的100个维度（即保留了大部分的数据的信息）。通常使用PCA降维过的数据训练线性分类器和神经网络会达到非常好的性能效果，同时还能节省时间和存储器空间。</p>
+<p>在实际中可能应用的最后一项转换是<strong>白话</strong>。白化操作以特征向量为基的数据为输入，将数据的每一个维度分别除以特征值以归一化。该变换的几何解释是，如果输入数据服从多元高斯分布，那么白化后的数据也将服从均值为0，单位协方差矩阵的高斯分布。该步奏采取下述的形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># whiten the data:</span><br><span class="line"># divide by the eigenvalues (which are square roots of the singular values)</span><br><span class="line">Xwhite = Xrot / np.sqrt(S + 1e-5)</span><br></pre></td></tr></table></figure>
+<p>警告：放大的噪声。额外加上1e-5是为防止除0错误。该转换的一种缺点是会急剧放大数据中的噪声，因为该操作将所有维度（包括那些只有极少差异性而大多是噪声的维度）转换成相同输入范围。这实际上可以通过更强的平滑（即增加1e-5成为更大的数字）来减轻。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn2/prepro2.jpeg" alt=""><br>PCA/白化。左边：原始二维数据。中间：执行完PCA操作。数据以原点为中心，并且旋转至以协方差矩阵的特征向量为基向量。这样就对数据进行了解相关（协方差矩阵变成对角阵）。右边：每个维度被特征值缩放，将数据协方差矩阵转换成单位矩阵。从几何上看，就是对数据在各个方向上拉伸压缩，使之变成服从高斯分布的一个数据点分布。</p>
+<hr>
+<p>我们可以使用CIFAR-10数据将这些变化可视化出来。CIFAR-10的训练集大小为50000 x 3072，其中每个图像都被拉伸为3072维的行向量。 然后，我们可以计算[3072 x 3072]协方差矩阵并计算其SVD分解（可能相对昂贵）。 计算出的特征向量看起来像什么？ 图像可能有所帮助：</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn2/cifar10pca.jpeg" alt=""><br>最左：一个用于演示的集合，含49张图片。左二：3072个特征值向量中的前144个。靠前的特征向量保留了数据的大部分方差，<strong>可以看见它们与图像中较低的频率相关</strong>。右二：使用PCA降维后的144维特征向量表示的图片。这就是说，原始图像使用3072维向量表示，每一个向量的元素是图片上某个位置的像素在某个颜色通道中的亮度值。而现在每张图片只使用了一个144维的向量，其中每个元素表示了特征向量对于组成这张图片的贡献度。为了让图片能够正常显示，需要将144维度重新变成基于像素基准的3072个数值。因为U是一个旋转，可以通过乘以$U.transpose()[:144,:]$来实现，然后将得到的3072个数值可视化。可以看见图像变得有点模糊了，这正好说明前面的特征向量获取了较低的频率。然而，大多数信息还是保留了下来。最右：将“白化”后的数据进行显示。其中144个维度中的方差都被压缩到了相同的数值范围。然后144个白化后的数值通过乘以U.transpose()[:144,:]转换到图像像素基准上。现在较低的频率（代表了大多数方差）可以忽略不计了，较高的频率（代表相对少的方差）就被放大了。</p>
+<hr>
+<p>实践操作。在这个笔记中提到PCA和白化主要是为了介绍的完整性，实际上在卷积神经网络中并不会采用这些变换。然而对数据进行零中心化操作还是非常重要的，对每个像素进行归一化也很常见。</p>
+<p>常见错误。进行预处理很重要的一点是：任何预处理策略（比如数据均值）都只能在训练集数据上进行计算，算法训练完毕后再应用到验证集或者测试集上。例如，如果先计算整个数据集图像的平均值然后每张图片都减去平均值，最后将整个数据集分成训练/验证/测试集，那么这个做法是错误的。应该怎么做呢？应该先分成训练/验证/测试集，只是从训练集中求图片平均值，然后各个集（训练/验证/测试集）中的图像再减去这个平均值。</p>
+<h3 id="权重初始化"><a href="#权重初始化" class="headerlink" title="权重初始化"></a>权重初始化</h3><p>我们已经看到如何构建神经网络架构，以及如何预处理数据。 在我们开始训练网络之前，我们必须初始化它的参数。</p>
+<p><strong>陷阱</strong>：全零初始化。 让我们从我们不应该做的事开始。 请注意，我们不知道在训练好的网络中每个权重的最终值应该是多少，但通过适当的数据归一化，可以合理地假设大约一半的权重是正数，其中一半是负数。 一个合理的观点可能是将所有初始权重设置为零，我们认为这是期望中的“最佳猜测”。 这是一个错误，因为如果网络中的每个神经元计算出相同的输出，那么它们也将在反向传播期间计算相同的梯度并且经历完全相同的参数更新。 换句话说，如果它们的权重被初始化为相同，则神经元之间不存在不对称的来源。</p>
+<p><strong>小的随机数值</strong>：因此，权重初始值要非常接近0又不能等于0。解决方法就是将权重初始化为很小的数值，以此来打破对称性。其思路是：如果神经元刚开始的时候是随机且不相等的，那么它们将计算出不同的更新，并将自身变成整个网络的不同部分。小随机数权重初始化的实现方法是：W = 0.01 * np.random.randn(D,H)。其中randn函数是基于零均值和标准差的一个高斯分布（译者注：国内教程一般习惯称均值参数为期望\mu）来生成随机数的。根据这个式子，每个神经元的权重向量都被初始化为一个随机向量，而这些随机向量又服从一个多变量高斯分布，这样在输入空间中，所有的神经元的指向是随机的。也可以使用均匀分布生成的随机数，但是从实践结果来看，对于算法的结果影响极小。</p>
+<p><em>警告</em>：并不是小数值一定会得到好的结果。例如，一个神经网络的层中的权重值很小，那么在反向传播的时候就会计算出非常小的梯度（因为梯度与权重值是成比例的）。这就会很大程度上减小反向传播中的“梯度信号”，在深度网络中，就会出现问题。</p>
+<p><strong>使用1/sqrt(n)校准方差</strong>：上述方法的一个问题是，随着输入数据量的增长，随机初始化的神经元的输出数据的分布中的方差也在增大。可以通过将随机初始化后的权重除以输入数据的数量的平方根从而使得每个神经元的输出的方差为1.这就是说推荐的启发式初始化方法：$w = np.random.randn(n)/sqat(n)$，n为输入数据的个数。<strong>这确保了网络中的所有神经元最初具有大致相同的输出分布，并且从经验上看能提高了收敛速度。</strong></p>
+<p>推导的大致步骤如下：考虑权重w与输入数据x的内积$\sum_i^n{w_ix_i}$，这是还没有进行非线性激活函数运算之前的原始数值。我们可以检查s的方差：<br>$$Var(s)=Var(\sum_i^n{w_ix_i})=\sum_i^nVar({w_ix_i})=\sum_i^n[E(w_i)]^2Var(x_i)+E[(x_i)]^2Var(w_i)+Var(x_i)Var(w_i)=\sum_i^nVar(x_i)Var(w_i)=(nVar(w))Var(x)$$<br>等式前两步根据的是方差的性质（变量独立则方差可加性）。第三步，假设权重和输入的均值为0.值得注意的是，并不是所有情况都是如此：ReLU函数的均值则为正数。在最后一步，我们假设所有的$w_i$,$x_i$都服从同样的分布.从推导中可以看出，如果我们希望$s$和输入$x$具有相同的方差，那么在初始化时必须确保每一个权重$w$的方差为$1\over n$。又因为$Var(aX)=a^2Var(X)$，所以这就说明可以基于一个标准高斯分布，然后乘以$a=\sqrt{1\over n}$,使得方差为$1\over{n}$。就可以导出$w=np.random.randn(n)/sprt(n)$。</p>
+<p>Glorot等在论文Understanding the difficulty of training deep feedforward neural networks中作出了类似的分析。在论文中，作者推荐初始化公式为$Var(w)=2/(n<em>{in}+n</em>{out})$，其中$n<em>{in}, n</em>{out}$是在前一层和后一层中单元的个数。这是基于妥协和对反向传播中梯度的分析得出的结论。该主题下最新的一篇论文是：Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification，作者是He等人。文中给出了一种针对ReLU神经元的特殊初始化，并给出结论：网络中神经元的方差应该是2.0/n。代码为$w = np.random.randn(n) * sqrt(2.0/n)$。这个形式是神经网络算法使用ReLU神经元时的当前最佳推荐。</p>
+<p><strong>稀疏初始化</strong>：解决未校准方差问题的另一种方法是将所有权重矩阵设置为零，但是为了破坏对称性，每个神经元随机连接（从上面的小高斯采样的权重）到它下面的固定数量的神经元。 连接的典型神经元数可能只有10个。</p>
+<p><strong>偏置的初始化</strong>：将偏差初始化为零是可能的也是常见的，因为不对称破坏是由权重中的小随机数提供的。对于ReLU非线性，有些人喜欢对所有偏差使用小的常数值，例如0.01，因为这可以确保所有ReLU单位在开始时激活并因此获得并传播一些梯度。然而，目前尚不清楚这是否能够提供一致的改进（实际上有些结果似乎表明这种情况表现较差），而且仅使用0偏置初始化更为常见。</p>
+<p><strong>实际应用</strong>：目前推荐使用ReLU激活函数并使用$w=np.random.randn(n)*sprt(2.0/n)$，具体见<a href="http://arxiv-web3.library.cornell.edu/abs/1502.01852" target="_blank" rel="noopener">He et al….</a></p>
+<p><strong>批量归一化（Batch Normalization）</strong>:批量归一化是loffe和Szegedy最近才提出的方法，该方法减轻了如何合理初始化神经网络这个棘手的问题，参见<a href="http://link.zhihu.com/?target=http%3A//arxiv.org/abs/1502.03167" target="_blank" rel="noopener">论文</a>。它在一定程度上减轻了如何初始化网络权重的问题。具体做法为让数据在输入激活函数前先通过一个网络，通过这个网络之后，输出数据（即输入激活函数的数据）服从标准高斯分布。因为归一化是一个可以简单的求导操作，因此方案可行。实际应用中，常常在全连接层（卷积层）和激活函数(非线性操作）之间插入一个BatchNormalization层。批归一化可以理解为在网络每一层之前都做了预处理。</p>
+<h3 id="正则化"><a href="#正则化" class="headerlink" title="正则化"></a>正则化</h3><p>有几种控制神经网络防止过拟合的能力的方法：</p>
+<p><strong>L2正则化</strong>：这可能是最常用的正则化方法了。可以通过惩罚目标函数中所有参数的平方将其实现。即对于网络中的每个权重w，向目标函数中增加一个$\frac{1}{2}\lambda w^2$，其中$\lambda$是正则化强度。前面这个$\frac{1}{2}$很常见，是因为加上$\frac{1}{2}$后，该式子关于w梯度就是$\lambda w$而不是$2\lambda w$了。L2正则化可以直观理解为它对于大数值的权重向量进行严厉惩罚，倾向于更加分散的权重向量。在线性分类章节中讨论过，由于输入和权重之间的乘法操作，这样就有了一个优良的特性：使网络更倾向于使用所有输入特征，而不是严重依赖输入特征中某些小部分特征。最后需要注意在梯度下降和参数更新的时候，使用L2正则化意味着所有的权重都以$w += -lambda * w$向着0线性下降。</p>
+<p><strong>L1正则化</strong>：L1是另外一种相对常用的正则化，对于每一个权重w,增加$\lambda |w|$到目标函数上。也可以联合使用L1和L2正则化：$\lambda_1∣w∣+\lambda_2w2$（被称为<a href="http://web.stanford.edu/~hastie/Papers/B67.2%20%282005%29%20301-320%20Zou%20&amp;%20Hastie.pdf" target="_blank" rel="noopener">Elastic net regularization</a>）。L1正则化有个神奇的特性，即它将导致权重向量在优化过程中最终变得稀疏（i.e. 十分接近0）。换句话来说，经过L1正则化后，使用时，用的就是输入的子集了（某些权重系数接近0，对应输入会变为0），并且噪音数据不会对其产生影响。比较而言，L2正则化则倾向于使得权重向量比较分散且数值较小。实际使用中，如果不是特别关系特征的选取，那么L2正则化可以取得比L1更好的效果。</p>
+<p><strong>最大范式约束</strong>：正则化的另一种形式是对每个神经元的权向量的值执行绝对上限，并使用投影梯度下降来强制约束。在实践中，这相应于正常执行参数更新，然后通过裁剪每个神经元的权向量w来满足‖w⃗‖2&lt;c来执行约束。c的典型值约为3或4。其吸引人的特性之一是，即使学习率设置得太高，网络也不能“爆炸”，因为更新总是有界的。</p>
+<p><strong>随机失活（Dropout）</strong>：Dropout是Srivastava等人最近引入的正则化技术，非常有效，简单。 <a href="http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf" target="_blank" rel="noopener"> Dropout: A Simple Way to Prevent Neural Networks from Overfitting </a>，用于补充其他方法（L1，L2，maxnorm）。训练时，随机失活通过保持一个神经元以某种概率p（一个超参数）激活，否则将其设置为零。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn2/dropout.jpeg" alt=""><br>图片来自于<a href="http://www.cs.toronto.edu/~rsalakhu/papers/srivastava14a.pdf" target="_blank" rel="noopener">Dropout paper</a>。在训练时，随机失活可以解释为在完整的神经网络采样形成新的小的神经网络，并且根据输入数据只更新没有失活的神经元权重。（然而，数量巨大的子网络们并不是相互独立的，因为它们都共享参数）。值得注意的是在测试过程中并不使用随机失活，可以理解为是对数量巨大的子网络们做了模型集成（model ensemble），以此来计算出一个平均的预测。</p>
+<hr>
+<p>普通三层随机失活神经网络简单实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">def train_step(X):</span><br><span class="line">  &quot;&quot;&quot; X contains the data &quot;&quot;&quot;</span><br><span class="line">  </span><br><span class="line">  # forward pass for example 3-layer neural network</span><br><span class="line">  H1 = np.maximum(0, np.dot(W1, X) + b1)</span><br><span class="line">  U1 = np.random.rand(*H1.shape) &lt; p # first dropout mask</span><br><span class="line">  H1 *= U1 # drop!</span><br><span class="line">  H2 = np.maximum(0, np.dot(W2, H1) + b2)</span><br><span class="line">  U2 = np.random.rand(*H2.shape) &lt; p # second dropout mask</span><br><span class="line">  H2 *= U2 # drop!</span><br><span class="line">  out = np.dot(W3, H2) + b3</span><br><span class="line">  </span><br><span class="line">  # backward pass: compute gradients... (not shown)</span><br><span class="line">  # perform parameter update... (not shown)</span><br><span class="line">  </span><br><span class="line">def predict(X):</span><br><span class="line">  # ensembled forward pass</span><br><span class="line">  H1 = np.maximum(0, np.dot(W1, X) + b1) * p # NOTE: scale the activations</span><br><span class="line">  H2 = np.maximum(0, np.dot(W2, H1) + b2) * p # NOTE: scale the activations</span><br><span class="line">  out = np.dot(W3, H2) + b3</span><br></pre></td></tr></table></figure>
+<p>在上面的代码中，train_step函数在第一个隐层和第二个隐层上进行了两次随机失活。在输入层上面进行随机失活也是可以的，为此需要为输入数据X创建一个0-1mask。反向传播过程不变，但需要将U1,U2纳入梯度传递考虑。</p>
+<p>值得注意的是，在predict函数中我们并不使用dropout，而是在两个隐藏层后对输出乘以p进行缩放。这一点很重要，因为在测试时所有神经元都能看到他们所有的输入，所以我们希望测试时神经元的输出与训练时期的输出相同。例如，在p = 0.5的情况下，神经元在测试时间必须将他们的输出减半，以获得与他们在训练时间期间相同的输出（期望值）。为了获得同样的输出结果，以一个神经元的输出作为例子（在执行随机失活之前）。因为以概率p执行随机失活，这个神经元的期望输出则变为$px+(1-p)*0$。在测试时，由于所有的神经元保持激活状态，所以为了得到相同的输出则必须调整$x-&gt;px$。也可以看成是，在测试时对所有可能的子网络进行整合从而得到预测结果。</p>
+<p>上述方案的不好方面是，我们必须在测试时对激活函数进行缩放，然而这很影响测试时的时间性能。为了解决这个问题，我们可以采用反向随机激活，也即在训练时对激活函数进行缩放而在测试时直接使用。此外，反向随机失活可以使得预测的代码保持一致。反向随机失活代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&quot;&quot;&quot; </span><br><span class="line">Inverted Dropout: Recommended implementation example.</span><br><span class="line">We drop and scale at train time and don&apos;t do anything at test time.</span><br><span class="line">&quot;&quot;&quot;</span><br><span class="line">p=0.5 #probability of keeping a unit active. higher = less dropout</span><br><span class="line"></span><br><span class="line">def train_step(X):</span><br><span class="line">    # forward pass for example 3-layer neural network</span><br><span class="line">    H1 = np.maximum(0, np.dot(W1,X)+b1)</span><br><span class="line">    U1 = (np.random.rand(*H1.shape) &lt; p) / p # first dropout mask. Notice /p!</span><br><span class="line">    H1 *= U1 # drop!</span><br><span class="line">    H2 = np.maximum(0, np.dot(W2, H1) + b2)</span><br><span class="line">    U2 = (np.random.rand(*H2.shape) &lt; p) / p            # second dropout mask. Notice /p!</span><br><span class="line">    H2 *= U2 # drop!</span><br><span class="line">    out = np.dot(W3, H2) + b3</span><br><span class="line">  </span><br><span class="line">     # backward pass: compute gradients...(not shown)</span><br><span class="line">    # perform parameter update... (not shown)</span><br><span class="line">def predict(X):</span><br><span class="line">  #  ensembled forward pass</span><br><span class="line">  H1 = np.maximum(0, np.dot(W1, X) + b1) # no scaling necessary</span><br><span class="line">  H2 = np.maximum(0, np.dot(W2, H1) + b2)</span><br><span class="line">  out = np.dot(W3, H2) + b3</span><br></pre></td></tr></table></figure>
+<p>在第一次引入随机失活之后，人们进行了大量的研究，试图了解它在实践中的效果好的原因，以及它与其他正规化技术的关系。 有兴趣的读者可以推荐进一步阅读：</p>
+<ul>
+<li><a href="http://link.zhihu.com/?target=http%3A//www.cs.toronto.edu/%257Ersalakhu/papers/srivastava14a.pdf" target="_blank" rel="noopener">Dropout paper by Srivastava et al. 2014.</a></li>
+<li><a href="http://link.zhihu.com/?target=http%3A//papers.nips.cc/paper/4882-dropout-training-as-adaptive-regularization.pdf" target="_blank" rel="noopener">Dropout Training as Adaptive Regularization</a>“我们证明了，在通过逆对角费歇尔信息矩阵的估计对特征进行缩放之后，dropout正则化是一阶等价于L2正则化”。</li>
+</ul>
+<p><em><strong>正向传播中的噪音</strong></em>。随机失活属于更普遍的一类方法，在网络的正向传递中引入随机行为。在测试过程中，噪声在分析上被边缘化（如同dropout中乘以p时的情况一样），或数值地（例如通过采样，通过用不同的随机决定执行多个正向通过然后对它们进行平均）。在这个方向上的其他研究的一个例子包括<a href="http://cs.nyu.edu/~wanli/dropc/" target="_blank" rel="noopener">DropConnect</a>，其中一个随机权重集在正向传递期间被设置为零。 作为预示，卷积神经网络还利用了随机汇集，分数汇集和数据增强等方法的优势。稍后我们将详细介绍这些方法。</p>
+<p><strong>偏置正则化</strong>：正如我们在“线性分类”部分中已经提到的那样，正则化偏置参数并不常见，因为它们不通过乘法相互作用与数据交互，因此没有解释如何控制数据维度对最终目标的影响。但是，在实际应用中（并且具有适当的数据预处理），规范偏差很少会导致性能显着变差。 这很可能是因为与所有权重相比，偏倚项的数量非常少，所以如果分类器需要它们来获得更好的数据损失，则该分类器可以“承担”使用偏置参数。</p>
+<p><strong>每层正则化</strong>：对于不同的层进行不同的正则化很少见（可能除了输出层以外），关于这个思路的相关文献也很少。</p>
+<p><strong>实际中</strong>：通过交叉验证获得一个全局使用的L2正则化强度$\lambda$是比较常见的。在使用L2正则化的同时在所有层后面使用随机失活也很常见。p值一般默认设为0.5，也可能在验证集上调参。</p>
+<h3 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h3><p>我们已经讨论了目标函数的正则化损失部分，这可以视为对模型复杂度的惩罚。目标函数的第二个部分是数据损失，在监督学习中则是预测值于实际标签的差异程度。数据损失采用的是每个数据示例损失的平均值，即$L=1\over{N}\sum_i{L_i}$，其中N为样本数量。在实际使用中，有以下几个问题需要解决：</p>
+<p><strong>分类问题</strong>：目前常用的损失函数主要有两类，分别为SVM的hinge Loss–$L<em>i = \sum</em>{j\neq{y_i}} max(0, f<em>j-f</em>{y_i}+1)$（也有人认为平方hinge loss：$L<em>i = \sum</em>{j\neq{y_i}} max(0, (f<em>j-f</em>{y_i}+1)^2)$）。第二类为Softmax使用的Cross-entropy损失：$L<em>i=-log({e^{f</em>{y_i}} \over{\sum_j e^{f_j}}})$</p>
+<p><strong>问题</strong>：类别数目巨大。当标签的集合巨大时（例如字典中的所有英文单词），这时就需要使用分层softmax（<a href="http://link.zhihu.com/?target=http%3A//arxiv.org/pdf/1310.4546.pdf" target="_blank" rel="noopener">Hierarchical Softmax</a>）。分层softmax将标签分解成一个树。每个标签都表示成这个树上的一个路径，这个树的每个节点处都训练一个Softmax分类器来在左和右分枝之间做决策。树的结构对于算法的最终结果影响很大，而且一般需要具体问题具体分析。</p>
+<p><strong>属性分类</strong>： 上述两种损失都假设有一个正确的答案。 但是如果yi是一个二元向量，那么每个例子都可能有或没有特定的标签，并且这些标签不是唯一的呢？ 例如，Instagram上的图像可以被认为是来自一大组所有主题标签中的特定标签子集，而图像可能包含多个标签。 在这种情况下，一个明智的方法是为每个单独的标签构建一个二元分类器。 例如，每个类别的二元分类器将独立采用以下形式：<br>$$L_i = \sum<em>j max(0, 1-y</em>{ij}f<em>j)$$<br>其中j是标签数量，$y</em>{ij}$是+1或-1，取决于该样本是否被标记为第j类标签，得分函数$f_j$取值为正或者负。如果样本是正例而score function值小于+1，或者样本是负例而score function值大于-1，则损失就会积累。</p>
+<p>另一种方法是对每种标签训练一个独立的逻辑回归分类器。二分类的逻辑回归分类器只有两个分类（0，1），其中对于分类1的概率计算为：<br>$\displaystyle P(y=1|x;w,b)=\frac{1}{1+e^{-(w^Tx+b)}}=\sigma(w^Tx+b)$<br>因为类别0和类别1的概率和为1，所以类别0的概率为：$\displaystyle P(y=0|x;w,b)=1-P(y=1|x;w,b)$。这样，如果$\sigma(w^Tx+b)&gt;0.5$或者$w^Tx+b&gt;0$，那么样本就要被分类成为正样本（y=1）。然后损失函数最大化这个对数似然函数，问题可以简化为：<br>$\displaystyle L_i=\sum<em>jy</em>{ij}log(\sigma(f<em>j))+(1-y</em>{ij})log(1-\sigma(f<em>j))$<br>上式中，假设标签$y</em>{ij}$非0即1，$\sigma(.)$就是sigmoid函数。上面的公式看起来吓人，但是f的梯度实际上非常简单：$\displaystyle \frac{\partial L_i}{\partial f<em>j}=y</em>{ij}-\sigma(f_j)$（你可以自己求导来验证）。</p>
+<p><strong>回归</strong>是预测实值数量的任务，例如房屋价格或图像中某物的长度。 对于这项任务，计算预测量与真实答案之间的损失是很常见的，然后测量L2平方范数或L1范数。L2范式计算如下：$$L_i=||f-y_i||^2_2$$</p>
+<p>L2范数在目标中的平方的原因是梯度变得更简单，而不改变最优参数，因为平方是单调操作。 L1规范将通过将每个维度的绝对值相加来制定：$$<br>L_i=||f-y_i||_1=\sum_j|f_j-(y_i)_j|<br>$$</p>
+<p><strong>注意事项</strong>：L2损失比起更加稳定的损失如Softmax损失更加难以优化。直观上说，L2要求网络具备一个特别的性质，即对于每个输入（和增量）都要有一个确切的正确值。而在Softmax中就不需要这样的特性，它只关注他们的值是否恰当。另外，L2损失鲁棒性不好，因为异常值可以导致很大的梯度。所以在面对一个回归问题时，先考虑将输出变成二值化是否真的不够用。例如，如果对一个产品的星级进行预测，使用5个独立的分类器来对1-5星进行打分的效果一般比使用一个回归损失要好很多。分类还有一个额外优点，就是能给出关于回归的输出的分布，而不是一个简单的毫无把握的输出值。如果确信分类不适用，那么使用L2损失吧，但是一定要谨慎：如果使用回归，L2是一个不错的选择。但是在dorpout网络结构中，不宜再用L2。</p>
+<blockquote>
+<p>面对回归问题时，优先想想能不能转换为分类问题。</p>
+</blockquote>
+<p><strong>结构化预测</strong>）。结构化损失是指标签可以是任意的结构，例如图表、树或者其他复杂物体的情况。通常这种情况还会假设结构空间非常巨大，不容易进行遍历。结构化SVM背后的基本思想就是在正确的结构$y_i$和得分最高的非正确结构之间画出一个边界。解决这类问题，并不是像解决一个简单无限制的最优化问题那样使用梯度下降就可以了，而是需要设计一些特殊的解决方案，这样可以有效利用对于结构空间的特殊简化假设。我们简要地提一下这个问题，但是详细内容就超出本课程范围。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>总结：</p>
+<ul>
+<li>推荐的预处理是将数据居中以使其均值为零，并将每个特征值归一化为[-1,1]</li>
+<li>初始化权重方法，通过使用高斯分布，标准差为$\sqrt{\frac{2}{n}}$. 例如：<code>w = np.random.randn(n) * sqrt(2.0/n)</code></li>
+<li>使用L2正则化和dropout（反向正则化版本）</li>
+<li>使用批量归一化</li>
+<li>我们讨论了可在实践中面对的不同任务，以及每项任务最常见的损失函数。</li>
+</ul>
+<p>我们现在预处理数据并初始化模型。在下一节中，我们将看看学习过程及其动态特性。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CS231n、DL、CV/" rel="tag"># CS231n、DL、CV</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/04/Neural-Nets-Notes-1/" rel="next" title="Neural Nets Notes-1">
+                <i class="fa fa-chevron-left"></i> Neural Nets Notes-1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/04/Neural-Nets-Notes-3/" rel="prev" title="Neural Nets Notes-3">
+                Neural Nets Notes-3 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">Artikel</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">Tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhouxincheng" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhouxincheng@pku.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://plus.google.com/John David" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhou-xin-cheng-1" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Neural-Nets-notes-2"><span class="nav-number">1.</span> <span class="nav-text"><a href="#Neural-Nets-notes-2" class="headerlink" title="Neural Nets notes 2"></a>Neural Nets notes 2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#设置数据和模型"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#&#x8BBE;&#x7F6E;&#x6570;&#x636E;&#x548C;&#x6A21;&#x578B;" class="headerlink" title="&#x8BBE;&#x7F6E;&#x6570;&#x636E;&#x548C;&#x6A21;&#x578B;"></a>&#x8BBE;&#x7F6E;&#x6570;&#x636E;&#x548C;&#x6A21;&#x578B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据预处理"><span class="nav-number">1.1.1.</span> <span class="nav-text"><a href="#&#x6570;&#x636E;&#x9884;&#x5904;&#x7406;" class="headerlink" title="&#x6570;&#x636E;&#x9884;&#x5904;&#x7406;"></a>&#x6570;&#x636E;&#x9884;&#x5904;&#x7406;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#权重初始化"><span class="nav-number">1.1.2.</span> <span class="nav-text"><a href="#&#x6743;&#x91CD;&#x521D;&#x59CB;&#x5316;" class="headerlink" title="&#x6743;&#x91CD;&#x521D;&#x59CB;&#x5316;"></a>&#x6743;&#x91CD;&#x521D;&#x59CB;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正则化"><span class="nav-number">1.1.3.</span> <span class="nav-text"><a href="#&#x6B63;&#x5219;&#x5316;" class="headerlink" title="&#x6B63;&#x5219;&#x5316;"></a>&#x6B63;&#x5219;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">1.1.4.</span> <span class="nav-text"><a href="#&#x635F;&#x5931;&#x51FD;&#x6570;" class="headerlink" title="&#x635F;&#x5931;&#x51FD;&#x6570;"></a>&#x635F;&#x5931;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.1.5.</span> <span class="nav-text"><a href="#&#x5C0F;&#x7ED3;" class="headerlink" title="&#x5C0F;&#x7ED3;"></a>&#x5C0F;&#x7ED3;</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://Jason.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2018/02/23/Neural-Nets-Notes-2/';
+          this.page.identifier = '2018/02/23/Neural-Nets-Notes-2/';
+          this.page.title = 'Neural Nets Notes-2';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://Jason.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

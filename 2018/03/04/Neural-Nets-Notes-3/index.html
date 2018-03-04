@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CS231n、DL、CV," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Neural Nets notes3内容列表：  梯度检查 合理性检查 监督学习过程 损失函数 训练/验证正确率 权重：更新速率 每层激活/梯度分布 可视化   参数更新 一阶（随机梯度下降）、动量方法、Nesterov动量 退火学习率 二阶方法 逐参数适应学习率（Adagrad，RMSProp）   超参数优化 评估 模型集成   总结 附加参考  Learning在前面的章节中，我们讨论了神经">
+<meta name="keywords" content="CS231n、DL、CV">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Neural Nets Notes-3">
+<meta property="og:url" content="http://yoursite.com/2018/03/04/Neural-Nets-Notes-3/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Neural Nets notes3内容列表：  梯度检查 合理性检查 监督学习过程 损失函数 训练/验证正确率 权重：更新速率 每层激活/梯度分布 可视化   参数更新 一阶（随机梯度下降）、动量方法、Nesterov动量 退火学习率 二阶方法 逐参数适应学习率（Adagrad，RMSProp）   超参数优化 评估 模型集成   总结 附加参考  Learning在前面的章节中，我们讨论了神经">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/learningrates.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/loss.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/accuracies.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/weights.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/cnnweights.jpg">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/opt2.gif">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/opt1.gif">
+<meta property="og:image" content="http://cs231n.github.io/assets/nn3/gridsearchbad.jpeg">
+<meta property="og:updated_time" content="2018-03-04T05:57:05.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Neural Nets Notes-3">
+<meta name="twitter:description" content="Neural Nets notes3内容列表：  梯度检查 合理性检查 监督学习过程 损失函数 训练/验证正确率 权重：更新速率 每层激活/梯度分布 可视化   参数更新 一阶（随机梯度下降）、动量方法、Nesterov动量 退火学习率 二阶方法 逐参数适应学习率（Adagrad，RMSProp）   超参数优化 评估 模型集成   总结 附加参考  Learning在前面的章节中，我们讨论了神经">
+<meta name="twitter:image" content="http://cs231n.github.io/assets/nn3/learningrates.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Hipanda'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/04/Neural-Nets-Notes-3/"/>
+
+
+
+
+
+  <title>Neural Nets Notes-3 | Hexo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9996a598fab67114f38e4c027f3f0092";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/04/Neural-Nets-Notes-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Neural Nets Notes-3</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-04T10:56:10+08:00">
+                2018-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/04/Neural-Nets-Notes-3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/04/Neural-Nets-Notes-3/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Neural-Nets-notes3"><a href="#Neural-Nets-notes3" class="headerlink" title="Neural Nets notes3"></a>Neural Nets notes3</h1><p>内容列表：</p>
+<ul>
+<li>梯度检查</li>
+<li>合理性检查</li>
+<li>监督学习过程<ul>
+<li>损失函数</li>
+<li>训练/验证正确率</li>
+<li>权重：更新速率</li>
+<li>每层激活/梯度分布</li>
+<li>可视化</li>
+</ul>
+</li>
+<li>参数更新<ul>
+<li>一阶（随机梯度下降）、动量方法、Nesterov动量</li>
+<li>退火学习率</li>
+<li>二阶方法</li>
+<li>逐参数适应学习率（Adagrad，RMSProp）</li>
+</ul>
+</li>
+<li>超参数优化</li>
+<li>评估<ul>
+<li>模型集成</li>
+</ul>
+</li>
+<li>总结</li>
+<li>附加参考</li>
+</ul>
+<h2 id="Learning"><a href="#Learning" class="headerlink" title="Learning"></a>Learning</h2><p>在前面的章节中，我们讨论了神经网络的静态部分：我们如何设置网络连接，数据和损失函数。 本部分学习动态设置参数，或者换句话说，学习参数和找到好的超参数的过程。</p>
+<h3 id="梯度检查"><a href="#梯度检查" class="headerlink" title="梯度检查"></a>梯度检查</h3><p>执行梯度检查看上去比较简单，但是实际实施起来却容易出现问题。以下是几种方法能够有效避免问题的出现：</p>
+<p><strong>使用中心化的形式</strong>：有两种方式可以用来计算梯度，一种是：$$\frac{df(x)}{dx}=\frac{f(x+h)-f(x)}{h}$$第二种是：$$\frac{df(x)}{dx}=\frac{f(x+h)-f(x-h)}{h}$$虽然第二种要求计算损失两回，但是梯度计算的结果更加精确。可以使用泰勒公式验证第一个公式出错的概率为$O(h)$，而第二个出错度为$O(h^2)$</p>
+<p><strong>使用相对误差比较</strong>：通常使用相对误差来比较数值梯度与分析梯度之间的误差，即$$\frac{|f_a^{‘}-f_n^{‘} |}{max(|f_a^{‘}|,|f_n^{‘}|)}$$,分母的max可以替换为add运算，max操作更加常见，一方面可以防止除0错误（这在激活函数为ReLU时很常见），另方面保证对称性。然而，这两种操作都无法避免分母同时为0的情况且通过梯度检查的情况。实际中：</p>
+<ul>
+<li>相对误差 &gt; $1e^{-2}$时，很可能梯度计算有误</li>
+<li>$1e^{-2}$&gt; 相对误差 &gt; $1e^{-4}$，有可能计算出错</li>
+<li>$1e^{-4}$ &gt; 相对误差，对不是连续可导的激活函数来说还凑合，但是对于光滑可导的激活函数如（tanh与softmax）来说误差太大</li>
+<li>当小于$1e^{-7}$，自然是极好的</li>
+</ul>
+<p>值得注意的是，随着神经网络的加深，相对误差将会更高，因为相对误差在会逐层积累。所以当深度为10时，$1e^{-2}$还说得过去。相反，如果一个可微函数的相对误差值是1e-2，那么通常说明梯度实现不正确。</p>
+<p><strong>使用双精度</strong>：双精度比单精度更加准确，有时改使用双精度后，相对错误率能从$1e^-2$到$1e^-8$</p>
+<p><strong>保持数值在单精度范围</strong>：通读<a href="http://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html" target="_blank" rel="noopener">“What Every Computer Scientist Should Know About Floating-Point Arithmetic”</a>，你会发现自己的编程错误并小心码。比如说，在神经网络中，对一个batch的损失函数进行归一化是很常见的。但是如果数据点梯度值很小，然后又除以数据点的数量，就会使得损失值更小，这将会导致数值错误。所以需要经常打印出原始的数值(numerical)梯度和分析(analytic)梯度，以确保你对比的数值不至于太小。通常认为绝对值小于$1e^{-10}$太小，需要对其进行放缩，比较理想的是1.0的数量级上，即当浮点数指数为0时。</p>
+<p><strong>目标函数的不可导点</strong>：梯度检查中可能出现的错误会发生在不可导点附近，例如ReLU函数的0点。考虑一个ReLU函数的具体案例，当$x=-1e^{-6}$时，因为x<0所以在该点的梯度为0.然而在用数值计算时， $x+h$="" 会越过0点位置，从而$f(x+h)="">0$，最终导致数值导数不为0.这种情况实际上是非常常见的。在使用SVM解决CIFAR-10分类问题时，总共有50000个例子，则会出现有45000个$max(0, x)$，因为每一个实例会产生9个$max(0,x)$而一个用SVM进行分类的神经网络因为采用了ReLU，还会有更多的不可导点。</0所以在该点的梯度为0.然而在用数值计算时，></p>
+<p><strong><em>值得关注的是，我们可以通过观察$max(x,y)$函数中较大的那个变量，在前向传播过程如果 $f(x+h)$ 或者$f(x-h)$有一个最大值发生变化，那么说明越过了不可导点。</em></strong> </p>
+<p><strong>使用少量数据点</strong>：使用的数据点减少时，自然而然也会导致越过不可导的点数量减少。通常来说2到3点数据点就可以用于代替整个批次的数据点。</p>
+<p><strong>注意h的大小</strong>：公式中的h并不是越小越好，因为越小的h在计算梯度会遇到数值问题。所以，在梯度检查遇到问题时，使用$1e^{-4}$or$1e^{-6}$反而会得到正确答案。</p>
+<p><strong>在典型的操作模式下检查梯度</strong>：梯度检查的只是参数控件个别点，如果这些点不具有代表性，即使在这些点上梯度检查通过也不能保证所有点上梯度都正确。因此，为了安全起见，最好使用一个短暂的“预热”时间，在这段时间内允许网络学习并在损失开始下降后执行梯度检查。在第一次迭代中执行梯度检查的危险是，这可能引入病态边缘案例并掩盖梯度的不正确实现。</p>
+<p><strong>不要让正则化淹没数据</strong>：通常的损失包括数据损失和正则损失。必须要注意的是梯度是否大部分来自正则损失，而这会掩盖数据损失梯度的不正确实现。因此，建议先关闭正则化项单纯考虑数据损失，然后再考虑正则损失梯度。有两种方式可以只考虑正则损失梯度，一种是编码移除数据损失，另一种则是增强正则强度使其在梯度检查中不可忽视，从而就可以发现梯度的不正常实现。</p>
+<p><strong>关闭随机失活和数据扩展</strong>：在执行梯度检查时需要关闭那些不确定因素如随机失活和随机数据扩展。否则这将引入不确定的因素导致梯度检查错误。当然关闭这些会导致你无法得知关于这部分是否梯度检查正确。因此，更好的方法是，在计算$f(x+h)$，$f(x-h)$引入确定的随机种子。</p>
+<p><strong>只检查几个维度</strong>：损失函数参数众多，不能一一检查，实际中只检查某几个维度的梯度，而默认其他维度的梯度是正确的。需要注意的是：不能将多个参数整合成一个大的参数继而进行检查，而应该单独检查每一个单独的参数。</p>
+<h3 id="学习之前：合理性检查的提示与技巧"><a href="#学习之前：合理性检查的提示与技巧" class="headerlink" title="学习之前：合理性检查的提示与技巧"></a>学习之前：合理性检查的提示与技巧</h3><p>在训练开始之前有以下几个小tricks：</p>
+<ul>
+<li><strong>检查特定情况下的损失</strong>。选择某个特定情况，并删去正则项损失然后计算损失。确保这样得出的损失符合预期。举例来说，使用Softmax在CIFAR-10数据集上进行分类，最开始的期望损失大约是2.302，因为实例最开始的每个类别的概率为$\frac{1}{10}$。对于SVM来说，因为所有的值都接近0，所以期望误差为9.</li>
+<li>第二，提高正则化强度时导致损失值变大。</li>
+<li><strong>过拟合子数据集</strong>。在真正开始训练之前，最重要的是要先对子数据集进行训练，确保模型能够达到损失值为0.就该步骤而言，最好设置正则化项损失为0.如果你的模型不能过拟合子数据集，就别想太多了，回去修改模型去吧！但是，在小数据集上训练的很好并不代表在大数据集上一定能够训练顺利。</li>
+</ul>
+<h3 id="检查整个学习过程"><a href="#检查整个学习过程" class="headerlink" title="检查整个学习过程"></a>检查整个学习过程</h3><p>在训练神经网络的过程中有多个重要的参数需要监控。图形化的参数有助于我们理解超参设定以及是如何变化的。</p>
+<p>下图中的x轴以周期（epochs）为单位，而不是以迭代次数为单位。一个周期是由多个迭代次数为单位，迭代次数通常由batch的大小决定。</p>
+<h4 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h4><p>绘制损失-周期的图标，能够清晰的显示损失函数的变化趋势，尤其曲线的形状能够告诉你关于学习率的问题。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn3/learningrates.jpeg" alt=""><img src="http://cs231n.github.io/assets/nn3/loss.jpeg" alt=""> </p>
+<p>左图显示了不同学习速率的曲线。学习率低时，曲线近似为直线，说明优化过程缓慢。然而学习率高时，曲线刚开始下降迅速，但是之后会达到一个不是太好的损失。因为“步长”太长导致损失函数开始震荡。右边是典型的在较小数据集上的损失函数的图像，因为图像局部范围内上下抖动，但是从全局上看却是下降的。一定程度说明学习率可能有点小，以及batch size有点小（因为损失函数噪音有点多）</p>
+<hr>
+<p>损失函数的震动程度和batch size相关。当batch size等于1时，震动程度最高，而当batch size为整个数据集时，震动程度最低，因为每个梯度更新都是单调地优化损失函数（除非学习率设置得过高）。</p>
+<p>有些研究者为了更好的对比损失函数，通常对损失函数取对数之后画出来，这样的对比会比较明显。<strong><em>因为学习过程通常采用的是指数形式，取对数后就变成了直线形式</em></strong></p>
+<h4 id="训练-验证准确率"><a href="#训练-验证准确率" class="headerlink" title="训练/验证准确率"></a>训练/验证准确率</h4><p>第二重要需要监视的参数是训练/验证准确率。该图表能够显示模型的过拟合程度：</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn3/accuracies.jpeg" alt=""><br>图中训练精度与验证精度之间的空隙大小表明了模型的过拟合程度。上面的图显示两种可能的情况。蓝色的验证曲线与训练精度空隙过大，表明强过拟合（甚至，会出现验证曲线在某些点之后下降）。当你遇到这种情况时，通常需要增强正则化的强度（如L2，dropuout等）或者收集更多的数据。另一种可能的情况是验证精度略低于训练精度，这表明模型的复杂度还不过高，可以增加模型参数提高模型复杂度</p>
+<hr>
+<h4 id="权重更新比例"><a href="#权重更新比例" class="headerlink" title="权重更新比例"></a>权重更新比例</h4><p>最后一个需要追踪的参数是更新的数值与原有数值的比例。注意：<em>更新值</em>不是原始梯度（例如，在简单sgd中，更新值为学习率乘以梯度）。需要独立地对每个参数集更新比例进行计算和跟踪。一个大概比例启发值为$1e^{-3}$。如果低于该值，说明学习率过低，如果高于该值，说明学习率过高。看一个具体的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># qweassume parameter vector W and its gradient vector dW</span><br><span class="line">param_scale = np.linalg.norm(W.ravel())</span><br><span class="line">update = -learning_rate*dW # simple SGD update</span><br><span class="line">update_scale = np.linalg.norm(update.ravel())</span><br><span class="line">W += update # the actual update</span><br><span class="line">print update_scale / param_scale # want ~1e-3</span><br></pre></td></tr></table></figure>
+<p><strong><em>不是使用最小或者最大值</em></strong>，有些人倾向于追踪计算梯度和更新的范式。这些值通常能够得到相同的结果</p>
+<h4 id="每层激活值-梯度的分布"><a href="#每层激活值-梯度的分布" class="headerlink" title="每层激活值/梯度的分布"></a>每层激活值/梯度的分布</h4><p>错误的初始化可能使学习过程减慢甚至停止。幸运的是，这个问题能够轻易被检测出来。一种方法是画出每一层的梯度/激活函数值直方图。直观上看来，如果分布比较奇怪通常说明有问题。例如，当时用tanh神经元时，希望看到的激活函数值在$[-1, 1]$区间内都有分布，而不是集中在0附近，或者处于饱和状态（-1和1附近）。</p>
+<h4 id="第一层可视化"><a href="#第一层可视化" class="headerlink" title="第一层可视化"></a>第一层可视化</h4><p>最后，当处理的是像素数据，那么把第一层特征可视化会有帮助：</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn3/weights.jpeg" alt=""><img src="http://cs231n.github.io/assets/nn3/cnnweights.jpg" alt=""><br>神经网络第一层可视化的例子。左边：充满噪音的特征表明：未收敛，不合适的学习率，正则化强度弱。右边：特征好，平滑，干净且特征种类多，说明训练过程进行地很好</p>
+<hr>
+<h3 id="参数更新"><a href="#参数更新" class="headerlink" title="参数更新"></a>参数更新</h3><p>一旦计算完梯度，就可以执行参数更新了。有多种方法可用来执行更新，下面将来讨论一波：</p>
+<p>我们注意到深度网络的优化目前是一个非常活跃的研究领域。在这一节中，将重点讨论一些常用有效的优化技术。从直观上描述而不会详细分析。</p>
+<h4 id="随机梯度下降及各种更新方法"><a href="#随机梯度下降及各种更新方法" class="headerlink" title="随机梯度下降及各种更新方法"></a>随机梯度下降及各种更新方法</h4><p><strong>普通更新</strong>：形式最简单的更新就是沿着梯度的负方向前进一定的步长<br><figure class="highlight plain"><figcaption><span>+</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">**动量更新**在深度网络中总能获得较好的收敛速率。该方式是从物理角度看待优化问题。特别，损失值看成是山丘的高度（因此，就有了势能$U=mgh$）。随机初始化参数可以看成是将一个初速度为0的质点放置在山的某一点。整个优化的过程也因此可以看成是模拟参数向量（即质点）在山的表面翻滚。</span><br><span class="line"></span><br><span class="line">既然作用在质点上的力与势能的梯度有关（$F=-\nabla U$）,因此作用在质点上的力就是损失函数的负梯度。又因为$F=ma$,所以负梯度与质点的加速度成比例。与SGD不同的是，在SGD中梯度直接影响质点所在的文职，而这动量的观点中，梯度先影响加速度继而影响质点所在的位置。更新有如下公式：</span><br></pre></td></tr></table></figure></p>
+<h1 id="动量更新"><a href="#动量更新" class="headerlink" title="动量更新"></a>动量更新</h1><p>v = mu<em>v -learning_rate</em>dx<br>x+=v<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">其中v被初始化为0，还引入了有一个超参数mu，被称为**动量**，通常被初始化为0.9，其物理意义更像是摩擦系数的含义。mu有效的抑制了速度从而使得降低了系统的动能，使质点能够在山底停下来。通过交叉验证该参数一般取值为[0.5,0.9,0.95,0.99]的某个。与学习率的退火类似，动量随时间而变化有时能够略微改善最优化的效果。设置时，mu最开始设置0.5，经过多轮周期后可能上升为0.99.</span><br><span class="line">&gt; 随着动量更新，参数向量会在任何有持续梯度的方向上增加速度。</span><br><span class="line"></span><br><span class="line">**Nesterov动量**与标准的动量有些许却别，最近很流行。对于凸函数而言，理论上能够取得更好的收敛，实际表现中也比标准动量来的更好些。</span><br><span class="line"></span><br><span class="line">Nesterov动量背后的核心观点是：现在参数向量处于某个x点，由于动量的影响，参数向量应该要位于$x+mu*v$点出，继而计算该点的梯度而不是计算原先x点的梯度。</span><br><span class="line"></span><br><span class="line">------</span><br><span class="line"></span><br><span class="line">![](http://cs231n.github.io/assets/nn3/nesterov.jpeg)</span><br><span class="line">相比计算当前位置的梯度（图上红色点），我们知道动量将会把点推倒绿色剪头的位置。所以在Nesterov更新中，我计算的是“向前”（looked-ahead）的位置的梯度</span><br><span class="line"></span><br><span class="line">------</span><br><span class="line">代码实现如下：</span><br></pre></td></tr></table></figure></p>
+<p>x_ahead = x + mu*v</p>
+<h1 id="evaluate-dx-ahead-the-gradient-at-x-ahead-instead-of-at-x"><a href="#evaluate-dx-ahead-the-gradient-at-x-ahead-instead-of-at-x" class="headerlink" title="evaluate dx_ahead (the gradient at x_ahead instead of at x)"></a>evaluate dx_ahead (the gradient at x_ahead instead of at x)</h1><p>v = mu <em> v - learning_rate </em> dx_ahead<br>x += v<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以通过变量替换等，将公式进行改写，使用x_ahead而不是x来进行更新，换句话说实际存储的参数向量总是向前一步的那个版本那个公式，并将x_ahead重新命名为x：</span><br></pre></td></tr></table></figure></p>
+<p>v_prev = v # 存储备份<br>v = mu <em> v - learning_rate </em> dx # 速度更新保持不变<br>x += -mu <em> v_prev + (1 + mu) </em> v # 位置更新变了形式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">更加详细的公式推导和理解，查看下列资料：</span><br><span class="line">* [Advances in optimizing Recurrent Networks by Yoshua Bengio, Section 3.5.](http://arxiv.org/pdf/1212.0901v2.pdf)</span><br><span class="line">* [Ilya Sutskever’s thesis (pdf) contains a longer exposition of the topic in section 7.2](http://www.cs.utoronto.ca/~ilya/pubs/ilya_sutskever_phd_thesis.pdf)</span><br><span class="line"></span><br><span class="line">#### 学习率退火</span><br><span class="line"></span><br><span class="line">在神经网络的训练中，随着时间对学习率进行退火是很用的事儿。学习率过大，刚开始下降会快，但会进入一个不是很好的局部最优中，来回震荡等。学习率过小，下降过慢从而浪费计算力。所以需要对学习率进行退火处理，通常有以下三种方式：</span><br><span class="line"></span><br><span class="line">* **随步数衰减**。每隔几个周期就降低学习率。典型的方式是，每隔5个周期就对学习率进行减半，又或者每20个周期学习率就乘以0.1。但是这些选择严重依赖问题的类型以及模型。一种实际中启发式的方法是，固定学习率进行训练，等到损失函数无法下降了就将学习率乘以某个常数（比如0.5）。</span><br><span class="line">* **指数衰减**：$\alpha = \alpha_0 e^&#123;-kt&#125;$，其中$\alpha_0$，k都是超参数，而t则是迭代的次数（也可以是周期）</span><br><span class="line">* **$\frac&#123;1&#125;&#123;t&#125;$**衰减：$\alpha = \frac&#123;\alpha_0&#125;&#123;1+kt&#125;$，参数的含义如上。</span><br><span class="line"></span><br><span class="line">实际中，我们发现步数衰减法更受欢迎，原因在于：公式所包含的超参数更易于解释。最后，如果你有足够的计算资源，可以让衰减更加缓慢一些，让训练时间更长些。</span><br><span class="line"></span><br><span class="line">#### 二阶方法</span><br><span class="line"></span><br><span class="line">在深度学习中，第二类常用的优化方法是基于牛顿法，其迭代如下：</span><br><span class="line">$x \leftarrow x - [H f(x)]^&#123;-1&#125; \nabla f(x)$</span><br><span class="line">$H f(x)$是[Hessian矩阵](https://zh.wikipedia.org/zh-hans/%E6%B5%B7%E6%A3%AE%E7%9F%A9%E9%98%B5)，是一个方形矩阵，每个元素都是二阶导数。$\nabla f(x)$是梯度下降中的梯度向量。直观上，海森矩阵表示的是损失函数的局部曲率问题，从而能够进行高效地更新。特别的，梯度乘以海森矩阵的逆能够使得函数在曲率比较缓的地方大步更新，而在曲率比较急的地方小步前进。更重要的是，在该公式中是没有超参数的，这是相对于一阶方法的巨大优势。</span><br><span class="line"></span><br><span class="line">然而上述的更新方法却无法应用到大多数的神经网络中去，原因在于海森矩阵空间和时间复杂度巨大。因此有许多*拟-牛顿*法被发明出来寻求逆海森矩阵的近似矩阵。其中，最出名的要数[L-BFGS](https://en.wikipedia.org/wiki/Limited-memory_BFGS)，该方法使用随时间的梯度中的信息来隐式地近似逆海森矩阵。</span><br><span class="line"></span><br><span class="line">然而，即使解决了海森矩阵的存储空间问题，L-BFGS应用的一个巨大缺点是需要对整个训练集进行计算，而不像Mini-batch SGD。让L-BFGS在小批量上运行需要技巧，这也是研究的热点。</span><br><span class="line"></span><br><span class="line">**实际中**。在深度学习和卷积神经网络中，使用L-BFGS之类的二阶方法并不常见。相反，基于（Nesterov的）动量更新的各种随机梯度下降方法更加常用，因为它们更加简单且容易扩展。</span><br><span class="line"></span><br><span class="line">参考资料：</span><br><span class="line">* [Large Scale Distributed Deep Networks ](http://link.zhihu.com/?target=http%3A//research.google.com/archive/large_deep_networks_nips2012.html)--谷歌大脑，比较了大规模数据情况下L-BFGS和SGD算法的表现。</span><br><span class="line">* SFO算法试图把SGD和L-BFGS的优势结合起来。</span><br><span class="line"></span><br><span class="line">#### 逐参数自适应学习率方法</span><br><span class="line"></span><br><span class="line">之前讨论的所有方法对学习率的调节对于所有的参数都是一致的。调节学习率是件费时的工作，所以有很多工作投入到发明能够适应性地对学习率调参的方法，甚至是逐个参数适应学习率调参。虽然这些方法很多时候也有超参数的设置问题，但是这些方法在超参更大范围上的表现要优于原学习率。接下来将介绍一些在实际中会用到的自适应方法：</span><br><span class="line"></span><br><span class="line">**Adagrad**是由[Duchi et al](http://jmlr.org/papers/v12/duchi11a.html)提出的。</span><br></pre></td></tr></table></figure></p>
+<h1 id="Assume-the-gradient-dx-and-parameter-vector-x"><a href="#Assume-the-gradient-dx-and-parameter-vector-x" class="headerlink" title="Assume the gradient dx and parameter vector x"></a>Assume the gradient dx and parameter vector x</h1><p>cache += dx<em>*2<br>x += - learning_rate </em> dx / (np.sqrt(cache) + eps)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注意到变量cache与梯度具有相同的size，并且记录的是每一个参数的梯度平方和，这个值之后被用于归一化参数更新步长。请注意，接收高梯度的权重会降低其有效学习率，而接受较少或不常更新的权重将会提高其有效学习率。有趣的是，对cache进行开发是非常重要的，如果没有开方则算法的表现地很差。而eps主要是为了避免除0错误。Adagrad的缺点是，在深度学习的情况下，***单调学习速率通常证明过于激进，并且过早停止学习***。</span><br><span class="line"></span><br><span class="line">**RMSprop**：RMSprop是一种十分高效但是却没有公开发表的自适应学习率方法。每个使用这个方法的人在他们的论文中都引用自Geoff Hinton的Coursera课程的第六课的第29页PPT。该方法是在Adagrad的基础上进行微调，是对cache的计算进行调整。从而减少了Adagrad的激进特性同时单调减小学习率。尤其是它使用了梯度平方的滑动平均</span><br></pre></td></tr></table></figure></p>
+<p>cache = decay_rate <em> cache + (1 - decay_rate) </em> dx<em>*2<br>x += - learning_rate </em> dx / (np.sqrt(cache) + eps)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">其中，decay_rate是一个超参数，通常选择自[0.9,0.99,0.999]。从上面可以看出，$x+=$部分与Adagrad一致，但是$cache$部分不同。RMSprop仍然是基于梯度大小对学习率进行调节，效果不错，和Adagrad不同的是它不会单调递减学习率。</span><br><span class="line"></span><br><span class="line">**Adam**：[Adam](http://arxiv.org/abs/1412.6980)是最近才提出的更新方法，有点类似带动量的RMSProp，简化版如下：</span><br></pre></td></tr></table></figure></p>
+<p>m = beta1<em>m + (1-beta1)</em>dx<br>v = beta2<em>v + (1-beta2)</em>(dx<em>*2)<br>x += - learning_rate </em> m / (np.sqrt(v) + eps)<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">可以看出该更新方式非常像RMSProp更新，除了用m来代替原始的梯度dx。参数的建议取值：eps=1e-8, beta1=0.9, beta2=0.999。实际运用中，Adam会稍微优于RMSProp，更常用些，同时也可以尝试下SGD+Nesterov的组合。完整的Adam算法还包括偏置矫正机制，该机制补偿了在前几个步中向量m，v都被初始化并且因此在它们完全“预热”之前偏向零的事实。完整代码如下：</span><br></pre></td></tr></table></figure></p>
+<h1 id="t-is-your-iteration-counter-going-from-1-to-infinity"><a href="#t-is-your-iteration-counter-going-from-1-to-infinity" class="headerlink" title="t is your iteration counter going from 1 to infinity"></a>t is your iteration counter going from 1 to infinity</h1><p>m = beta1<em>m + (1-beta1)</em>dx<br>mt = m / (1-beta1<strong>t)<br>v = beta2<em>v + (1-beta2)</em>(dx</strong>2)<br>vt = v / (1-beta2<em>*t)<br>x += - learning_rate </em> mt / (np.sqrt(vt) + eps)<br>```<br>请注意，更新现在是迭代次数以及其他参数的函数。 我们推荐读者阅读这篇文章的细节。</p>
+<p>附加参考：</p>
+<ul>
+<li><a href="http://arxiv.org/abs/1312.6055" target="_blank" rel="noopener">Unit Tests for Stochastic Optimization proposes a series of tests as a standardized benchmark for stochastic optimization.</a></li>
+</ul>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn3/opt2.gif" alt=""><br><img src="http://cs231n.github.io/assets/nn3/opt1.gif" alt=""><br>上面一张图是登高线图，带有动量的更新方法，有点像是滚过头了然后回滚的感觉。下面的那张图描述了各个算法在鞍点的性能。可以看到SGD在这种情况就比较蛋疼了，来回震荡，而RMSProp由于分母的设置能够感知到较小的梯度的方向，从而顺利越过鞍点位置。</p>
+<hr>
+<h3 id="超参数调优"><a href="#超参数调优" class="headerlink" title="超参数调优"></a>超参数调优</h3><p>正如我们所看到的，训练神经网络可能涉及许多超参数设置。 神经网络中最常见的超参数包括：</p>
+<ul>
+<li>初始学习率</li>
+<li>学习率衰减方式（i.e一个衰减常量）</li>
+<li>正则化强度（L2惩罚，随机失活强度）</li>
+</ul>
+<p>但正如我们所看到的那样，还有许多相对较不敏感的超参数，例如在每参数自适应学习方法，动量设置和时间表等方面。在本节中，我们将介绍执行超参数搜索的一些其他技巧和诀窍：</p>
+<p><strong>实现</strong>：较大的神经网络通常需要很长时间来训练，因此执行超参数搜索可能需要几天/每周。记住这一点很重要，因为它会影响代码的设计。一个特别的设计是让<strong>worker</strong>连续对随机超参数进行采样并执行优化。在训练期间，<strong>worker</strong>将在每个时期后跟踪验证性能，并将模型检查点（连同各种培训统计数据，如一段时间的损失）写入文件，最好在共享文件系统上写入。 将验证性能直接包含在文件名中是很有用的，这样检查和排序进度很简单。 然后有第二个程序，我们称之为master，在计算机集群中启动或杀死<strong>worker</strong>，并且可以另外检查<strong>woker</strong>写入的检查点并绘制他们的训练统计数据等。</p>
+<p><strong>相比交叉验证，优先选用一个验证集合</strong>。 在大多数情况下，一个可观的大小的单一验证集大大简化了代码，而不需要多次折叠的交叉验证。你会听到人们说他们“交叉验证”了一个参数，但很多时候它假定他们仍然只使用一个验证集。</p>
+<p><strong>超参取值范围</strong>：在对数范围内搜寻超参数。例如：$learning_rate = 10 ** uniform(-6, 1)$。正则化强度也可以使用该规则。直观上是因为学习率和正则强度在动态训练时有乘法效果。举个例子，如果固定地将学习率加0.01，那么对原由学习率为0.01的动态训练过程产生巨大影响，然而如果原有学习率为10则几乎不产生影响。这是因为学习率更新时会乘以梯度。因此，更加自然的想法是：将学习率乘以或除以某个值而不是直接加减值。另外，一些参数通常在原来的范围内搜索，如<code>dropout = uniform(0,1)</code></p>
+<p><strong>优先使用随机搜索而不是网格搜索</strong>：Bergstra 和 Bengio在<a href="http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf" target="_blank" rel="noopener">Random Search for Hyper-Parameter Optimization</a>一文中论述了随机搜索比网格搜索在超参选择更有效率并且更容易实现。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/nn3/gridsearchbad.jpeg" alt=""><br>在”超参数的随机搜索”中核心的观点是：通常情况下一些超参会比另外的超参重要点，而随机搜索能够更加准确发现比较重要参数的好的取值范围</p>
+<hr>
+<p><strong>注意边界上的最优值</strong>：有时候你可能在一个不大好的范围上搜索超参。例如：假定我们<code>learning_rate = 10 ** uniform(-6, 1)</code>来搜索学习率，当我们得到目前的最优学习率时，有必要检查下这个最优学习率是否发生在边界范围上，否则你将会错过超出该范围内的最优值。</p>
+<p><strong>从粗到细分阶段进行搜索</strong>：在实践中，首先在粗略范围内搜索（例如10 ** [-6,1]），然后根据最佳结果在哪里出现，从而缩小范围在进行搜索。此外，在仅训练1个周期或甚至更少时执行初始粗略搜索会很有帮助，因为许多超参数设置可能导致模型根本无法学习，或者立即以损失激增。然后，第二阶段可以用5个周期执行小范围地搜索，最后阶段可以在更多周期（例如）最终范围内执行详细搜索。</p>
+<p><strong>贝叶斯超参数最优化</strong>：这是一个全面的研究领域，致力于提出可以更有效地搜寻超参数空间的算法。核心思想是在查询不同超参数所表现的性能时，适当平衡探索与利用之间的权衡。基于这些模型开发了多个库，其中一些更为人熟知的是Spearmint，SMAC和Hyperopt。 然而在ConvNets中，还是随机搜索更加有效。更多的讨论可以看<a href="http://nlpers.blogspot.com/2014/10/hyperparameter-search-bayesian.html" target="_blank" rel="noopener">这篇文章</a></p>
+<h2 id="评估"><a href="#评估" class="headerlink" title="评估"></a>评估</h2><h3 id="模型集成"><a href="#模型集成" class="headerlink" title="模型集成"></a>模型集成</h3><p>实践中，通过将独立的模型进行集成并在测试阶段平均每个模型的预测结果，得到的结果要优于单个模型。一般来说，集成的模型越多，模型越不同，性能将呈现单调上升的趋势。以下是进行集成的几个方法：</p>
+<ul>
+<li><strong>同一个模型，不同的初始化</strong>：通过交叉验证得到模型最好的超参数，只是在初始化时不同。一个弊端是：模型的不同只取决于参数的初始化。</li>
+<li><strong>交叉验证得到的性能前几的模型</strong>：通过交叉验证模型得到前几名不同的模型，进而进行集合。该方法运用了不同的模型却可能得到次最优模型。实际上，该方法的运用比较简单，因为不需要额外的工作</li>
+<li><strong>一个模型不同记录点</strong>：如果训练非常昂贵，有些人会选择在固定某些周期后记录同一个网络不同的模型，然后使用这些模型进行集成。很明显，这样会导致损失多样性，但实际中这个方法也还行。这种方法的优势是代价比较小。</li>
+<li><strong>训练时参数运行平均值</strong>：在训练中，如果损失至比前一次出现了指数级衰减则记录下此时的权重，在整个训练完成时，对已经记录下的值进行平均得到参数。这样你就对钱几次循环中的网络状态进行了平均。实际上，该方法能提高1%~2%的性能。粗略直观的理解是，目标函数是一个碗状的，参数在碗的周边跳跃，参数的平均更有可能到达碗的更深处。</li>
+</ul>
+<p>模型集合的一个缺点是它们需要更长时间才能对测试示例进行评估。 感兴趣的读者可能会发现最近Geoff Hinton在<a href="https://www.youtube.com/watch?v=EK61htlw8hY" target="_blank" rel="noopener">Dark Knowledge</a>中所做的工作鼓舞人心，其中的想法是通过将集合对数可能性合并到一个修改后的目标中，将一个好的集合“提炼出”回单一模型。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>训练神经网络的步骤：</p>
+<ul>
+<li>利用小批量数据对实现进行梯度检查，还要注意各种错误</li>
+<li>作为完整性检查，确保你的初始损失是合理的，并且你可以在很小一部分数据上获得100％的训练准确性</li>
+<li>在训练期间，监测损失，训练/验证的准确性，如果你觉得有趣，还可以跟踪参数值相关的更新幅度值（应该是〜1e-3），并且如果在处理ConvNets，可以可视化第一层的权重。</li>
+<li>推荐使用的两个更新是SGD + Nesterov Momentum或Adam。</li>
+<li>在训练期间衰减您的学习速度。例如，在固定数量的周期后，或者验证准确性达到最高时，将学习率减半。</li>
+<li>用随机搜索搜索好的超参数（不是网格搜索），从粗略（广泛的超参数范围，仅适用于1-5个时期的训练），到细致（更狭窄的巡警，更多的时代训练）进行搜索</li>
+<li>集成模型以获得额外的性能</li>
+</ul>
+<h2 id="额外参考"><a href="#额外参考" class="headerlink" title="额外参考"></a>额外参考</h2><ul>
+<li><a href="http://research.microsoft.com/pubs/192769/tricks-2012.pdf" target="_blank" rel="noopener">SGD tips and tricks from Leon Bottou</a></li>
+<li><a href="http://yann.lecun.com/exdb/publis/pdf/lecun-98b.pdf" target="_blank" rel="noopener">Efficient BackProp (pdf) from Yann LeCun</a></li>
+<li><a href="http://arxiv.org/pdf/1206.5533v2.pdf" target="_blank" rel="noopener">Practical Recommendations for Gradient-Based Training of Deep Architectures from Yoshua Bengio</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CS231n、DL、CV/" rel="tag"># CS231n、DL、CV</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/23/Neural-Nets-Notes-2/" rel="next" title="Neural Nets Notes-2">
+                <i class="fa fa-chevron-left"></i> Neural Nets Notes-2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">Artikel</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">Tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhouxincheng" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhouxincheng@pku.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://plus.google.com/John David" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhou-xin-cheng-1" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Neural-Nets-notes3"><span class="nav-number">1.</span> <span class="nav-text"><a href="#Neural-Nets-notes3" class="headerlink" title="Neural Nets notes3"></a>Neural Nets notes3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Learning"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#Learning" class="headerlink" title="Learning"></a>Learning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#梯度检查"><span class="nav-number">1.1.1.</span> <span class="nav-text"><a href="#&#x68AF;&#x5EA6;&#x68C0;&#x67E5;" class="headerlink" title="&#x68AF;&#x5EA6;&#x68C0;&#x67E5;"></a>&#x68AF;&#x5EA6;&#x68C0;&#x67E5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#学习之前：合理性检查的提示与技巧"><span class="nav-number">1.1.2.</span> <span class="nav-text"><a href="#&#x5B66;&#x4E60;&#x4E4B;&#x524D;&#xFF1A;&#x5408;&#x7406;&#x6027;&#x68C0;&#x67E5;&#x7684;&#x63D0;&#x793A;&#x4E0E;&#x6280;&#x5DE7;" class="headerlink" title="&#x5B66;&#x4E60;&#x4E4B;&#x524D;&#xFF1A;&#x5408;&#x7406;&#x6027;&#x68C0;&#x67E5;&#x7684;&#x63D0;&#x793A;&#x4E0E;&#x6280;&#x5DE7;"></a>&#x5B66;&#x4E60;&#x4E4B;&#x524D;&#xFF1A;&#x5408;&#x7406;&#x6027;&#x68C0;&#x67E5;&#x7684;&#x63D0;&#x793A;&#x4E0E;&#x6280;&#x5DE7;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查整个学习过程"><span class="nav-number">1.1.3.</span> <span class="nav-text"><a href="#&#x68C0;&#x67E5;&#x6574;&#x4E2A;&#x5B66;&#x4E60;&#x8FC7;&#x7A0B;" class="headerlink" title="&#x68C0;&#x67E5;&#x6574;&#x4E2A;&#x5B66;&#x4E60;&#x8FC7;&#x7A0B;"></a>&#x68C0;&#x67E5;&#x6574;&#x4E2A;&#x5B66;&#x4E60;&#x8FC7;&#x7A0B;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#损失函数"><span class="nav-number">1.1.3.1.</span> <span class="nav-text"><a href="#&#x635F;&#x5931;&#x51FD;&#x6570;" class="headerlink" title="&#x635F;&#x5931;&#x51FD;&#x6570;"></a>&#x635F;&#x5931;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#训练-验证准确率"><span class="nav-number">1.1.3.2.</span> <span class="nav-text"><a href="#&#x8BAD;&#x7EC3;-&#x9A8C;&#x8BC1;&#x51C6;&#x786E;&#x7387;" class="headerlink" title="&#x8BAD;&#x7EC3;/&#x9A8C;&#x8BC1;&#x51C6;&#x786E;&#x7387;"></a>&#x8BAD;&#x7EC3;/&#x9A8C;&#x8BC1;&#x51C6;&#x786E;&#x7387;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#权重更新比例"><span class="nav-number">1.1.3.3.</span> <span class="nav-text"><a href="#&#x6743;&#x91CD;&#x66F4;&#x65B0;&#x6BD4;&#x4F8B;" class="headerlink" title="&#x6743;&#x91CD;&#x66F4;&#x65B0;&#x6BD4;&#x4F8B;"></a>&#x6743;&#x91CD;&#x66F4;&#x65B0;&#x6BD4;&#x4F8B;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#每层激活值-梯度的分布"><span class="nav-number">1.1.3.4.</span> <span class="nav-text"><a href="#&#x6BCF;&#x5C42;&#x6FC0;&#x6D3B;&#x503C;-&#x68AF;&#x5EA6;&#x7684;&#x5206;&#x5E03;" class="headerlink" title="&#x6BCF;&#x5C42;&#x6FC0;&#x6D3B;&#x503C;/&#x68AF;&#x5EA6;&#x7684;&#x5206;&#x5E03;"></a>&#x6BCF;&#x5C42;&#x6FC0;&#x6D3B;&#x503C;/&#x68AF;&#x5EA6;&#x7684;&#x5206;&#x5E03;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#第一层可视化"><span class="nav-number">1.1.3.5.</span> <span class="nav-text"><a href="#&#x7B2C;&#x4E00;&#x5C42;&#x53EF;&#x89C6;&#x5316;" class="headerlink" title="&#x7B2C;&#x4E00;&#x5C42;&#x53EF;&#x89C6;&#x5316;"></a>&#x7B2C;&#x4E00;&#x5C42;&#x53EF;&#x89C6;&#x5316;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数更新"><span class="nav-number">1.1.4.</span> <span class="nav-text"><a href="#&#x53C2;&#x6570;&#x66F4;&#x65B0;" class="headerlink" title="&#x53C2;&#x6570;&#x66F4;&#x65B0;"></a>&#x53C2;&#x6570;&#x66F4;&#x65B0;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#随机梯度下降及各种更新方法"><span class="nav-number">1.1.4.1.</span> <span class="nav-text"><a href="#&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x53CA;&#x5404;&#x79CD;&#x66F4;&#x65B0;&#x65B9;&#x6CD5;" class="headerlink" title="&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x53CA;&#x5404;&#x79CD;&#x66F4;&#x65B0;&#x65B9;&#x6CD5;"></a>&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x53CA;&#x5404;&#x79CD;&#x66F4;&#x65B0;&#x65B9;&#x6CD5;</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动量更新"><span class="nav-number">2.</span> <span class="nav-text"><a href="#&#x52A8;&#x91CF;&#x66F4;&#x65B0;" class="headerlink" title="&#x52A8;&#x91CF;&#x66F4;&#x65B0;"></a>&#x52A8;&#x91CF;&#x66F4;&#x65B0;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#evaluate-dx-ahead-the-gradient-at-x-ahead-instead-of-at-x"><span class="nav-number">3.</span> <span class="nav-text"><a href="#evaluate-dx-ahead-the-gradient-at-x-ahead-instead-of-at-x" class="headerlink" title="evaluate dx_ahead (the gradient at x_ahead instead of at x)"></a>evaluate dx_ahead (the gradient at x_ahead instead of at x)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Assume-the-gradient-dx-and-parameter-vector-x"><span class="nav-number">4.</span> <span class="nav-text"><a href="#Assume-the-gradient-dx-and-parameter-vector-x" class="headerlink" title="Assume the gradient dx and parameter vector x"></a>Assume the gradient dx and parameter vector x</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#t-is-your-iteration-counter-going-from-1-to-infinity"><span class="nav-number">5.</span> <span class="nav-text"><a href="#t-is-your-iteration-counter-going-from-1-to-infinity" class="headerlink" title="t is your iteration counter going from 1 to infinity"></a>t is your iteration counter going from 1 to infinity</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超参数调优"><span class="nav-number">5.0.1.</span> <span class="nav-text"><a href="#&#x8D85;&#x53C2;&#x6570;&#x8C03;&#x4F18;" class="headerlink" title="&#x8D85;&#x53C2;&#x6570;&#x8C03;&#x4F18;"></a>&#x8D85;&#x53C2;&#x6570;&#x8C03;&#x4F18;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#评估"><span class="nav-number">5.1.</span> <span class="nav-text"><a href="#&#x8BC4;&#x4F30;" class="headerlink" title="&#x8BC4;&#x4F30;"></a>&#x8BC4;&#x4F30;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模型集成"><span class="nav-number">5.1.1.</span> <span class="nav-text"><a href="#&#x6A21;&#x578B;&#x96C6;&#x6210;" class="headerlink" title="&#x6A21;&#x578B;&#x96C6;&#x6210;"></a>&#x6A21;&#x578B;&#x96C6;&#x6210;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.2.</span> <span class="nav-text"><a href="#&#x603B;&#x7ED3;" class="headerlink" title="&#x603B;&#x7ED3;"></a>&#x603B;&#x7ED3;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#额外参考"><span class="nav-number">5.3.</span> <span class="nav-text"><a href="#&#x989D;&#x5916;&#x53C2;&#x8003;" class="headerlink" title="&#x989D;&#x5916;&#x53C2;&#x8003;"></a>&#x989D;&#x5916;&#x53C2;&#x8003;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://Jason.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2018/03/04/Neural-Nets-Notes-3/';
+          this.page.identifier = '2018/03/04/Neural-Nets-Notes-3/';
+          this.page.title = 'Neural Nets Notes-3';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://Jason.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
