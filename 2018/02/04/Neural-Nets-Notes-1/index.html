@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="神经网络、机器学习," />
+  <meta name="keywords" content="CS231n、DL、CV," />
 
 
 
@@ -80,10 +80,10 @@
 
 
 <meta name="description" content="Neural Nets notes 1内容结构：  不用大脑类比进行简介 单神经元建模  生物刺激和连接 单神经元线性分类器 常用的激活函数   神经网络架构  层的组织 前向反馈计算实例 变现的力量 设置层数和大小   总结  附加的参考  快速介绍不使用大脑类比来介绍神经网络。在线性分类器的章节中，我们通过为不同的类别计算得分分数, $s = Wx$,其中W是权重矩阵而x是输入图片的像素列向量">
-<meta name="keywords" content="神经网络、机器学习">
+<meta name="keywords" content="CS231n、DL、CV">
 <meta property="og:type" content="article">
-<meta property="og:title" content="神经网络笔记-1">
-<meta property="og:url" content="http://yoursite.com/2018/02/06/神经网络笔记-1/index.html">
+<meta property="og:title" content="Neural Nets Notes-1">
+<meta property="og:url" content="http://yoursite.com/2018/02/04/Neural-Nets-Notes-1/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Neural Nets notes 1内容结构：  不用大脑类比进行简介 单神经元建模  生物刺激和连接 单神经元线性分类器 常用的激活函数   神经网络架构  层的组织 前向反馈计算实例 变现的力量 设置层数和大小   总结  附加的参考  快速介绍不使用大脑类比来介绍神经网络。在线性分类器的章节中，我们通过为不同的类别计算得分分数, $s = Wx$,其中W是权重矩阵而x是输入图片的像素列向量">
 <meta property="og:image" content="https://pic4.zhimg.com/80/d0cbce2f2654b8e70fe201fec2982c7d_hd.jpg">
@@ -92,9 +92,9 @@
 <meta property="og:image" content="https://pic1.zhimg.com/80/ccb56c1fb267bc632d6d88459eb14ace_hd.jpg">
 <meta property="og:image" content="http://cs231n.github.io/assets/nn1/layer_sizes.jpeg">
 <meta property="og:image" content="http://cs231n.github.io/assets/nn1/reg_strengths.jpeg">
-<meta property="og:updated_time" content="2018-02-06T08:59:30.596Z">
+<meta property="og:updated_time" content="2018-03-04T05:50:38.580Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="神经网络笔记-1">
+<meta name="twitter:title" content="Neural Nets Notes-1">
 <meta name="twitter:description" content="Neural Nets notes 1内容结构：  不用大脑类比进行简介 单神经元建模  生物刺激和连接 单神经元线性分类器 常用的激活函数   神经网络架构  层的组织 前向反馈计算实例 变现的力量 设置层数和大小   总结  附加的参考  快速介绍不使用大脑类比来介绍神经网络。在线性分类器的章节中，我们通过为不同的类别计算得分分数, $s = Wx$,其中W是权重矩阵而x是输入图片的像素列向量">
 <meta name="twitter:image" content="https://pic4.zhimg.com/80/d0cbce2f2654b8e70fe201fec2982c7d_hd.jpg">
 
@@ -126,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/02/06/神经网络笔记-1/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/02/04/Neural-Nets-Notes-1/"/>
 
 
 
 
 
-  <title>神经网络笔记-1 | Hexo</title>
+  <title>Neural Nets Notes-1 | Hexo</title>
   
 
 
@@ -249,7 +249,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/06/神经网络笔记-1/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/02/04/Neural-Nets-Notes-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="John Doe">
@@ -266,7 +266,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">神经网络笔记-1</h1>
+          <h1 class="post-title" itemprop="name headline">Neural Nets Notes-1</h1>
         
 
         <div class="post-meta">
@@ -278,8 +278,8 @@
               
                 <span class="post-meta-item-text">Veröffentlicht am</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-06T16:58:41+08:00">
-                2018-02-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-04T13:49:39+08:00">
+                2018-02-04
               </time>
             
 
@@ -297,9 +297,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2018/02/06/神经网络笔记-1/#comments" itemprop="discussionUrl">
+                <a href="/2018/02/04/Neural-Nets-Notes-1/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="2018/02/06/神经网络笔记-1/" itemprop="commentCount"></span>
+                        data-disqus-identifier="2018/02/04/Neural-Nets-Notes-1/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -433,7 +433,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/神经网络、机器学习/" rel="tag"># 神经网络、机器学习</a>
+            <a href="/tags/CS231n、DL、CV/" rel="tag"># CS231n、DL、CV</a>
           
         </div>
       
@@ -446,8 +446,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/02/04/Neural-Nets-Notes-1/" rel="next" title="Neural Nets Notes-1">
-                <i class="fa fa-chevron-left"></i> Neural Nets Notes-1
+              <a href="/2017/12/09/决策树与随机森林/" rel="next" title="决策树与随机森林">
+                <i class="fa fa-chevron-left"></i> 决策树与随机森林
               </a>
             
           </div>
@@ -455,6 +455,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/06/神经网络笔记-1/" rel="prev" title="神经网络笔记-1">
+                神经网络笔记-1 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -796,9 +800,9 @@
     
       <script type="text/javascript">
         var disqus_config = function () {
-          this.page.url = 'http://yoursite.com/2018/02/06/神经网络笔记-1/';
-          this.page.identifier = '2018/02/06/神经网络笔记-1/';
-          this.page.title = '神经网络笔记-1';
+          this.page.url = 'http://yoursite.com/2018/02/04/Neural-Nets-Notes-1/';
+          this.page.identifier = '2018/02/04/Neural-Nets-Notes-1/';
+          this.page.title = 'Neural Nets Notes-1';
         };
         var d = document, s = d.createElement('script');
         s.src = 'https://Jason.disqus.com/embed.js';
