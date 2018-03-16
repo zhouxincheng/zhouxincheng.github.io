@@ -238,6 +238,193 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/16/Search-Engine/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/16/Search-Engine/" itemprop="url">搜索引擎与开源搜索引擎系统</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-16T09:36:29+08:00">
+                2018-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/16/Search-Engine/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/16/Search-Engine/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="搜索引擎与开源搜索引擎系统"><a href="#搜索引擎与开源搜索引擎系统" class="headerlink" title="搜索引擎与开源搜索引擎系统"></a>搜索引擎与开源搜索引擎系统</h1><h2 id="Part1"><a href="#Part1" class="headerlink" title="Part1"></a>Part1</h2><h3 id="1-搜索指令"><a href="#1-搜索指令" class="headerlink" title="1. 搜索指令"></a>1. 搜索指令</h3><p><strong>个人常用的搜索指令：</strong></p>
+<ul>
+<li>site: 指定搜索某个网站。例如：搜索引擎 site:www.zhihu.com<br><img src="https://i.loli.net/2018/03/16/5aab19812fb1f.png" alt="Screen Shot 2018-03-15 at 12.17.12.png"></li>
+</ul>
+<ul>
+<li><p>filetype: 指定搜索的文件类型。例如：搜索引擎 filetype:pdf<br><img src="https://i.loli.net/2018/03/16/5aab19a110649.png" alt="Screen Shot 2018-03-15 at 12.37.59.png"></p>
+</li>
+<li><p>双引号: 引号内的内容与结果完全匹配。例如：“搜索引擎”<br><img src="https://i.loli.net/2018/03/16/5aab19a11311d.png" alt="Screen Shot 2018-03-15 at 12.38.46.png"></p>
+</li>
+</ul>
+<p><strong>个人不常用的搜索指令：</strong></p>
+<ul>
+<li><p>减号: 搜索的结果排除减号后面的关键字段。例如：搜索 -引擎<br><img src="https://i.loli.net/2018/03/16/5aab19a148cde.png" alt="Screen Shot 2018-03-15 at 12.39.54.png"></p>
+</li>
+<li><p>通配符*: 匹配任意字符。例如：搜索*擎。\<br><img src="https://i.loli.net/2018/03/16/5aab1980e6eeb.png" alt="Screen Shot 2018-03-15 at 12.40.56.png"></p>
+</li>
+</ul>
+<ul>
+<li>intitle: 在结果的标题中包含关键词，一次只能搜索一个关键词。例如： intitle:软微<br><img src="https://i.loli.net/2018/03/16/5aab198112888.png" alt="Screen Shot 2018-03-15 at 12.42.32.png"></li>
+</ul>
+<p><strong>个人没使用过的搜索指令：</strong></p>
+<ul>
+<li><p>inurl: 返回的结果的url中包含关键词。例如：软微 inurl:pku<br><img src="https://i.loli.net/2018/03/16/5aab1980eab1b.png" alt="Screen Shot 2018-03-15 at 12.46.45.png"></p>
+</li>
+<li><p>intext: 返回结果的正文内容中包含关键词。例如：intext:Peking University<br><img src="https://i.loli.net/2018/03/16/5aab19810730a.png" alt="Screen Shot 2018-03-15 at 12.47.44.png"></p>
+</li>
+<li><p>define: 查询关键词的词义，起的是字典的作用。例如：define:machine learning<br><img src="https://i.loli.net/2018/03/16/5aab198104be6.png" alt="Screen Shot 2018-03-15 at 12.30.18.png"></p>
+</li>
+<li><p>allintext: 在结果的正文内容中同时包含多个关键词，排他性指令。<br><img src="https://i.loli.net/2018/03/16/5aab19814a019.png" alt="Screen Shot 2018-03-15 at 12.35.04.png"></p>
+</li>
+</ul>
+<h3 id="Shakespeare"><a href="#Shakespeare" class="headerlink" title="Shakespeare"></a>Shakespeare</h3><p>从主页上看来，与其他众多搜索引擎不同，shakespeare是一个专门搜索悲剧、喜剧、歌剧等作品的引擎。<br><img src="https://i.loli.net/2018/03/16/5aab19a13abef.png" alt="Screen Shot 2018-03-15 at 12.56.13.png"><br>当然，可以限制在某个类型的作品中搜索。</p>
+<p>经实验，发现这个引擎不支持许多操作。例如通配符，intitle等<br><img src="https://i.loli.net/2018/03/16/5aab19a14716f.png" alt="Screen Shot 2018-03-15 at 13.04.22.png"></p>
+<h3 id="part1小结"><a href="#part1小结" class="headerlink" title="part1小结"></a>part1小结</h3><ul>
+<li>Google搜索引擎对我所测试的高级搜索指令全部支持，百度也是。但是Gigablast、Exalead等其他引擎或多或少不能支持一些指令，如intitle、intext等。</li>
+<li>个人而言，Google搜索结果相对更加准确很有用，当然这和我经常使用Google有一部分关系。</li>
+<li>qwant引擎的默认界面不同于其他引擎，搜索结果同时包括图片、网页和新闻等，也支持只搜索某个类别</li>
+<li>duckduckgo引擎可以选择搜索的范围，比如选择United Kingdom，那么结果就只是英国的网页。</li>
+<li>相比与国内的搜过和百度搜索引擎而言，国外的搜索引擎界面更加简洁，没有今日热点、产品等广告。</li>
+</ul>
+<h2 id="Part2"><a href="#Part2" class="headerlink" title="Part2"></a>Part2</h2><h3 id="1-开源搜索引擎系统"><a href="#1-开源搜索引擎系统" class="headerlink" title="1. 开源搜索引擎系统"></a>1. 开源搜索引擎系统</h3><h4 id="1-1-Lucene"><a href="#1-1-Lucene" class="headerlink" title="1.1 Lucene"></a>1.1 Lucene</h4><p>Lucene是目前最为流行的开放源代码全文搜索引擎工具包，隶属于Apache基金会，由资深全文索引/检索专家Doug Cutting所发起，并以其妻子的中间名作为项目的名称。Lucene不是一个具有完整特征的搜索应用程序，而是一个专注于文本索引和搜索的工具包，能够为应用程序添加索引与搜索能力。基于Lucene在索引及搜索方面的优秀表现，虽然由Java编写的Lucene具有天生的跨平台性，但仍被改编为许多其他语言的版本：Perl、Python、C++、.Net等。 </p>
+<p>同其他开源项目一样，Lucene具有非常好的架构，能够方便地在其基础上进行研究与开发，添加新功能或者开发新系统。Lucene本身只支持文本文件及少量语种的索引，并且不具备爬虫功能，而这正是Lucene的魅力所在，通过Lucene提供的丰富接口，我们可以根据自身的需要在其上添加具体语言的分词器，针对具体文档的文本解析器等，而这些具体的功能实现都可以借助于一些已有的相关开源软件项目、甚至是商业软件来完成，这也保证了Lucene在索引及搜索方面的专注性。目前，通过在Lucene的基础上加入爬行器、文本解析器等也形成了一些新的开源项目，如LIUS、Nutch等。并且Lucene的索引数据结构已经成了一种事实上的标准，为许多搜索引擎所采用。 </p>
+<h4 id="1-2-LIUS"><a href="#1-2-LIUS" class="headerlink" title="1.2 LIUS"></a>1.2 LIUS</h4><p>LIUS即Lucene Index Update and Search的缩写，它是以Lucene为基础发展起来的一种文本索引框架，和Lucene一样，同样可以看作搜索引擎开发工具包。它在Lucene的基础上作了一些相应的研究及添加了一些新的功能。LIUS借助于许多开源软件，可以直接对各种不同格式/类型的文档进行文本解析与索引，这些文档格式包括MS Word、MS Excel、MS PowerPoing、RTF、PDF、XML、HTML、TXT、Open Office及JavaBeans等，对Java Beans的支持对于进行数据库索引非常有用，在用户进行对象关系映射（如：Hibernate、JDO、TopLink、Torque等）的数据库连接编程时会变得更加精确。LIUS还在Lucene的基础上增加了索引更新功能，使针对索引的维护功能进一步完善。并且支持混和索引，可以把同一目录下与某一条件相关的所有内容整合到一起，这种功能对于需要对多种不同格式的文档同时进行索引时非常有用。 </p>
+<h4 id="1-3-Egothor"><a href="#1-3-Egothor" class="headerlink" title="1.3 Egothor"></a>1.3 Egothor</h4><p>Egothor是一款开源的高性能全文搜索引擎，适用于基于全文搜索功能的搜索应用，它具有与Luccene类似的核心算法，这个项目已经存在了很多年，并且拥有一些积极的开发人员及用户团体。项目发起者Leo Galambos是捷克布拉格查理大学数学与物理学院的一名高级助理教授，他在博士研究生期间发起了此项目。</p>
+<h4 id="1-4-Xapian"><a href="#1-4-Xapian" class="headerlink" title="1.4 Xapian"></a>1.4 Xapian</h4><p>Xapian是基于GPL发布的搜索引擎开发库，它采用C++语言编写，通过其提供绑定程序包可以使Perl、Python、PHP、Java、Tck、C#、Ruby等语言方便地使用它。 </p>
+<p>Xapian还是一个具有高适应性的工具集，使开发人员能够方便地为他们的应用程序添加高级索引及搜索功能。它支持信息检索的概率模型及丰富的布尔查询操作。Xapian的发布包通常由两部分组成：xapian-core及xapian-bindings，前者是核心主程序，后者是与其他语言进行绑定的程序包。 </p>
+<h4 id="1-5-Compass"><a href="#1-5-Compass" class="headerlink" title="1.5 Compass"></a>1.5 Compass</h4><p>Compass是在Lucene上实现的开源搜索引擎架构，相对比于Lucene而言，提供更加简洁的搜索引擎API。增加了索引事务处理的支持，使其能够更方便地与数据库等事务处理应用进行整合。它更新时无需删除原文档，更加简单更加高效。资源与搜索引擎之间采用映射机制，此种机制使得那些已经使用了Lucene或者不支持对象及XML的应用程序迁移到Compass上进行开发变得非常容易。 </p>
+<p>Compass还能与Hibernate、Spring等架构进行集成，因此如果想在Hibernate、Spring项目中加入搜索引擎功能，Compass是个极好的选择。 </p>
+<h3 id="2-网络爬虫开源代码系统"><a href="#2-网络爬虫开源代码系统" class="headerlink" title="2.网络爬虫开源代码系统"></a>2.网络爬虫开源代码系统</h3><h4 id="2-1-Heritrix"><a href="#2-1-Heritrix" class="headerlink" title="2.1 Heritrix"></a>2.1 Heritrix</h4><p>Heritrix is the Internet Archive’s open-source, extensible, web-scale, archival-quality web crawler project.</p>
+<p>Heritrix (sometimes spelled heretrix, or misspelled or mis-said as heratrix/heritix/ heretix/heratix) is an archaic word for heiress (woman who inherits). Since our crawler seeks to collect and preserve the digital artifacts of our culture for the benefit of future researchers and generations, this name seemed apt.</p>
+<p>All topical contributions to this wiki (corrections, proposals for new features, new FAQ items, etc.) are welcome! Register using the link near the top-right corner of this page. </p>
+<h4 id="2-2-Apache-Nutch"><a href="#2-2-Apache-Nutch" class="headerlink" title="2.2 Apache Nutch"></a>2.2 Apache Nutch</h4><p>Apache Nutch is a highly extensible and scalable open source web crawler software project.</p>
+<p>Nutch is coded entirely in the Java programming language, but data is written in language-independent formats. It has a highly modular architecture, allowing developers to create plug-ins for media-type parsing, data retrieval, querying and clustering.</p>
+<p>The fetcher (“robot” or “web crawler”) has been written from scratch specifically for this project.</p>
+<h4 id="2-3-Scrapy"><a href="#2-3-Scrapy" class="headerlink" title="2.3 Scrapy"></a>2.3 Scrapy</h4><p>Scrapy is a free and open source web crawling framework, written in Python. Originally designed for web scraping, it can also be used to extract data using APIs or as a general purpose web crawler. It is currently maintained by Scrapinghub Ltd., a web scraping development and services company.</p>
+<p>Scrapy project architecture is built around ‘spiders’, which are self-contained crawlers which are given a set of instructions. Following the spirit of other don’t repeat yourself frameworks, such as Django, it makes it easier to build and scale large crawling projects by allowing developers to re-use their code. Scrapy also provides a web crawling shell which can be used by developers to test their assumptions on a site’s behavior.</p>
+<p><a href="https://en.wikipedia.org/wiki/Apache_Nutch" target="_blank" rel="noopener">Apache_Nutch</a><br><a href="https://en.wikipedia.org/wiki/Scrapy" target="_blank" rel="noopener"></a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/04/Neural-Nets-Notes-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1369,7 +1556,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">Artikel</span>
                 </a>
               </div>
@@ -1382,7 +1569,7 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">Tags</span>
                 
               </div>
