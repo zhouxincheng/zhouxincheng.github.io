@@ -191,7 +191,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            Home
           </a>
         </li>
       
@@ -201,7 +201,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            Archives
           </a>
         </li>
       
@@ -224,6 +224,144 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/Pytorch-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/18/Pytorch-0/" itemprop="url">Pytorch-0</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-18T23:25:09+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/18/Pytorch-0/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/18/Pytorch-0/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="PyTorch简介"><a href="#PyTorch简介" class="headerlink" title="PyTorch简介"></a>PyTorch简介</h2><h3 id="Tensors"><a href="#Tensors" class="headerlink" title="Tensors"></a>Tensors</h3><p>Tensors与numpy中的ndarray类似，但是能运行在GPU上，在计算图表示为节点。tensor与ndarray能够容易的相互转换，如果想让tensor在GPU上运行，需要转换为对应的cuda()数据类型。</p>
+<h3 id="Autograd-自动求导"><a href="#Autograd-自动求导" class="headerlink" title="Autograd: 自动求导"></a>Autograd: 自动求导</h3><p>有了Autograd这个包，可以实现计算图的自动求导。</p>
+<h4 id="Variable"><a href="#Variable" class="headerlink" title="Variable"></a>Variable</h4><p><img src="http://pytorch.org/tutorials/_images/Variable.png" alt=""></p>
+<p>基础且核心概念，包装了data, grad和grad_fn。data是tensor是数据，grad是tensor的数据的梯度。对其求导可以显示的使用.backward()函数。</p>
+<h3 id="Neural-Networks"><a href="#Neural-Networks" class="headerlink" title="Neural Networks"></a>Neural Networks</h3><p>使用torch.nn包来定义神经网络，nn.Module包含了很多的神经网络层，常见的操作:forward()，不需要调用backward函数，因为autograd已经替你主动求导了，通过parameters()来查看参数。</p>
+<h4 id="损失函数"><a href="#损失函数" class="headerlink" title="损失函数"></a>损失函数</h4><p>nn定义了许多损失函数，如MSE、Crossentropy等</p>
+<h4 id="后向传播"><a href="#后向传播" class="headerlink" title="后向传播"></a>后向传播</h4><p>loss.backward(),由于pytorch产生的是动态图，所以在每一次求导之前需要重置之前的梯度为0: net.zero_grad()</p>
+<h4 id="更新权重"><a href="#更新权重" class="headerlink" title="更新权重"></a>更新权重</h4><p>torch.optim中包含大多数优化算法，用以更新权重参数。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -267,7 +405,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-16T09:36:29+08:00">
                 2018-03-16
@@ -454,7 +592,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-04T10:56:10+08:00">
                 2018-03-04
@@ -717,7 +855,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-23T15:55:07+08:00">
                 2018-02-23
@@ -943,7 +1081,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-04T13:49:39+08:00">
                 2018-02-04
@@ -1162,7 +1300,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-09T22:03:57+08:00">
                 2017-12-09
@@ -1418,7 +1556,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-09T22:00:19+08:00">
                 2017-12-09
@@ -1556,8 +1694,8 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">Artikel</span>
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
                 </a>
               </div>
             
@@ -1569,8 +1707,8 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">3</span>
-                  <span class="site-state-item-name">Tags</span>
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">tags</span>
                 
               </div>
             
@@ -1644,7 +1782,7 @@
 </div>
 
 
-  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
 
 
 
