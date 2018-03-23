@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CS231n、DL," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="理解和可视化卷积神经网络可视化卷积神经网络学到的知识对于那些认为神经网络中学到的特征不可解释，许多文献已经提出了多种方法用来可视化卷积神经网络，期望用来解释学到的知识。 可视化激活值和第一层的权重每一层的激活值。最简单直接的可视化技术就是直接显示前向传播过程中，每一层的激活值。对于使用ReLU的神经网络来说，激活值的图像在前几层总是显得相对blobby和密集，但随着训练的进行，激活值图像开始变稀疏">
+<meta name="keywords" content="CS231n、DL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可视化卷积神经网络">
+<meta property="og:url" content="http://yoursite.com/2018/03/23/可视化卷积神经网络/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="理解和可视化卷积神经网络可视化卷积神经网络学到的知识对于那些认为神经网络中学到的特征不可解释，许多文献已经提出了多种方法用来可视化卷积神经网络，期望用来解释学到的知识。 可视化激活值和第一层的权重每一层的激活值。最简单直接的可视化技术就是直接显示前向传播过程中，每一层的激活值。对于使用ReLU的神经网络来说，激活值的图像在前几层总是显得相对blobby和密集，但随着训练的进行，激活值图像开始变稀疏">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/act1.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/act2.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/filt1.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/filt2.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/pool5max.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/tsne.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnnvis/occlude.jpeg">
+<meta property="og:updated_time" content="2018-03-23T05:42:42.365Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="可视化卷积神经网络">
+<meta name="twitter:description" content="理解和可视化卷积神经网络可视化卷积神经网络学到的知识对于那些认为神经网络中学到的特征不可解释，许多文献已经提出了多种方法用来可视化卷积神经网络，期望用来解释学到的知识。 可视化激活值和第一层的权重每一层的激活值。最简单直接的可视化技术就是直接显示前向传播过程中，每一层的激活值。对于使用ReLU的神经网络来说，激活值的图像在前几层总是显得相对blobby和密集，但随着训练的进行，激活值图像开始变稀疏">
+<meta name="twitter:image" content="http://cs231n.github.io/assets/cnnvis/act1.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Hipanda'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/23/可视化卷积神经网络/"/>
+
+
+
+
+
+  <title>可视化卷积神经网络 | Hexo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9996a598fab67114f38e4c027f3f0092";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/23/可视化卷积神经网络/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">可视化卷积神经网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-23T13:42:16+08:00">
+                2018-03-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/23/可视化卷积神经网络/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/23/可视化卷积神经网络/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="理解和可视化卷积神经网络"><a href="#理解和可视化卷积神经网络" class="headerlink" title="理解和可视化卷积神经网络"></a>理解和可视化卷积神经网络</h1><h2 id="可视化卷积神经网络学到的知识"><a href="#可视化卷积神经网络学到的知识" class="headerlink" title="可视化卷积神经网络学到的知识"></a>可视化卷积神经网络学到的知识</h2><p>对于那些认为神经网络中学到的特征不可解释，许多文献已经提出了多种方法用来可视化卷积神经网络，期望用来解释学到的知识。</p>
+<h3 id="可视化激活值和第一层的权重"><a href="#可视化激活值和第一层的权重" class="headerlink" title="可视化激活值和第一层的权重"></a>可视化激活值和第一层的权重</h3><p><strong>每一层的激活值</strong>。最简单直接的可视化技术就是直接显示前向传播过程中，每一层的激活值。对于使用ReLU的神经网络来说，激活值的图像在前几层总是显得相对blobby和密集，但随着训练的进行，激活值图像开始变稀疏和集中在某一处。从这些可视化的图片上看来，可以发现，对于很多不同的输入存在一些激活值始终为0，这意味着dead filters，是高学习率的一种症状。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/cnnvis/act1.jpeg" alt=""><img src="http://cs231n.github.io/assets/cnnvis/act2.jpeg" alt=""></p>
+<p>上图左边是Alexnet的第一层的激活值图像，右边是第五层的图像，输入是一只猫。每一个正方形的小框对应的是某个filter的激活值。注意到，这些激活值是稀疏（大部分为0）且是局部的。</p>
+<hr>
+<p><strong>卷积层/全连接层Filters</strong>。可视化权重是第二种常见的方法。相比于可视化其他层，可视化第一层的filter更有说服力，因为第一层的filter是直接对原始像素数据进行操作。但是可视化深层次的filter权重也是可能的。训练效果很好的网络的权重可视化显示很很好很平滑没有噪音的模式。噪音的pattern可以用来指示一个网络是否训练的足够长，或者正则化强度不够导致的过拟合。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/cnnvis/filt1.jpeg" alt=""><img src="http://cs231n.github.io/assets/cnnvis/filt2.jpeg" alt=""></p>
+<p>第一个CONV层上的典型外观滤波器（左）以及训练很好的AlexNet的第二个CONV层（右）。可以观察到第一层的权重很好且平滑，说明这是一个好的收敛的网络。Alenet包含两种独立的处理流程，图上可以看到彩色和灰度特征独自聚集在一起，alexnet这种架构的典型后果是一种处理流呈现高频率的灰度特征，而另一种处理流呈现地频率的彩色特征。第二卷积层虽然不可解释，但是显然这图像是平滑且没有噪声的。</p>
+<hr>
+<h3 id="检索最大程度地激活神经元的图像"><a href="#检索最大程度地激活神经元的图像" class="headerlink" title="检索最大程度地激活神经元的图像"></a>检索最大程度地激活神经元的图像</h3><p>另一种可视化技术是采集大量图像数据集，通过前向传播并跟踪哪些图像最大程度地激活某个神经元。<a href="http://arxiv.org/abs/1311.2524" target="_blank" rel="noopener">详情见文献–Rich feature hierarchies for accurate object detection and semantic segmentation</a>然后，我们可以将图像可视化以了解神经元在其接受区域中寻找的内容。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/cnnvis/pool5max.jpeg" alt=""><br>上图显示的是在Alexnet网络第五个池化层最大限度激活神经元的图。白色显示特定神经元的激活值和感受视野。可以看出，一些神经元对上半身，文本或镜面高光敏感。</p>
+<hr>
+<p>这种方法的一个问题是，ReLU神经元本身不一定具有任何语义含义。相反，可以将众多ReLU神经元想象成构成图片集的空间的基向量。In other words, the visualization is showing the patches at the edge of the cloud of representations, along the (arbitrary) axes that correspond to the filter weights.This can also be seen by the fact that neurons in a ConvNet operate linearly over the input space, so any arbitrary rotation of that space is a no-op.详情见文献<a href="http://arxiv.org/abs/1312.6199" target="_blank" rel="noopener"> Intriguing properties of neural networks</a></p>
+<h3 id="Embedding-the-codes-with-t-SNE"><a href="#Embedding-the-codes-with-t-SNE" class="headerlink" title="Embedding the codes with t-SNE"></a>Embedding the codes with t-SNE</h3><p>ConvNets可以解释为将具有高维特性的图片使用T-SNE降维至低维（通常是2到3维）从而将其表示出来，并利用线性分类器将其分开。<a href="https://en.wikipedia.org/wiki/T-distributed_stochastic_neighbor_embedding" target="_blank" rel="noopener">t-SNE</a></p>
+<p>为了产生嵌入，我们可以获取一组图像，并使用ConvNet提取CNN代码（例如，在AlexNet中，分辨器之前的4096维矢量，以及包括ReLU非线性在内的关键因素）。 然后，我们可以将这些插入到t-SNE中，并为每个图像获取二维矢量。 相应的图像可以在网格中可视化。</p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/cnnvis/tsne.jpeg" alt=""><br>基于CNN代码的一组图像的t-SNE嵌入。 彼此相邻的图像在CNN表示空间也很接近，这意味着CNN“看到”它们非常相似。 请注意，相似性更多的是基于类和语义的，而不是像素和基于颜色的。 有关如何生成此可视化的更多详细信息，相关代码以及不同尺度下的更多相关可视化指的是CNN代码的<a href="http://cs.stanford.edu/people/karpathy/cnnembed/" target="_blank" rel="noopener">t-SNE可视化</a>。</p>
+<hr>
+<h3 id="Occluding-parts-of-the-image"><a href="#Occluding-parts-of-the-image" class="headerlink" title="Occluding parts of the image"></a>Occluding parts of the image</h3><p>假设ConvNet将图像分类为狗。我们怎么能确定它实际上是在图像中对狗进行抽取，而不是从背景或其他杂项对象中提取一些背景信息？为了验证上述观点，可以选择性的遮挡图片某些部分，再将其通过神经网络已获得分类概率，即最后的分类概率是遮挡部分的函数。最后绘制热力图，观察结果。详见<a href="http://arxiv.org/abs/1311.2901" target="_blank" rel="noopener"> Visualizing and Understanding Convolutional Networks</a></p>
+<hr>
+<p><img src="http://cs231n.github.io/assets/cnnvis/occlude.jpeg" alt=""></p>
+<p>三个输入图像（顶部）。请注意，被遮挡区域显示为灰色。当我们在图像上滑动遮挡物时，我们记录了正确类的概率，然后将其视为热图（在每个图像下面显示）。例如，在最左侧的图像中，我们看到，当覆盖狗的脸部时，博美犬的可能性直线下降，这给了我们一定程度的信心，即狗的脸部主要是高分类评分的原因。相反，清除图像的其他部分被认为具有相对可忽略的影响。</p>
+<hr>
+<h3 id="Visualizing-the-data-gradient-and-friends"><a href="#Visualizing-the-data-gradient-and-friends" class="headerlink" title="Visualizing the data gradient and friends"></a>Visualizing the data gradient and friends</h3><p><strong>Data Gradient.</strong><br><a href="http://arxiv.org/abs/1312.6034" target="_blank" rel="noopener">Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps</a></p>
+<p><strong>DeconvNet.</strong><br><a href="http://arxiv.org/abs/1311.2901" target="_blank" rel="noopener">Visualizing and Understanding Convolutional Networks</a></p>
+<p><strong>Guided Backpropagation.</strong><br><a href="http://arxiv.org/abs/1412.6806" target="_blank" rel="noopener">Striving for Simplicity: The All Convolutional Net</a></p>
+<p><strong>Reconstructing original images based on CNN Codes</strong><br><a href="http://arxiv.org/abs/1412.0035" target="_blank" rel="noopener">Understanding Deep Image Representations by Inverting Them</a></p>
+<p><strong>How much spatial information is preserved?</strong><br><a href="http://papers.nips.cc/paper/5420-do-convnets-learn-correspondence.pdf" target="_blank" rel="noopener">Do ConvNets Learn Correspondence? (tldr: yes)</a></p>
+<p><strong>Plotting performance as a function of image attributes</strong><br><a href="http://arxiv.org/abs/1409.0575" target="_blank" rel="noopener">ImageNet Large Scale Visual Recognition Challenge</a></p>
+<p><strong>Fooling ConvNets</strong><br><a href="http://arxiv.org/abs/1412.6572" target="_blank" rel="noopener">Explaining and Harnessing Adversarial Examples</a></p>
+<p><strong>Comparing ConvNets to Human labelers</strong><br><a href="http://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/" target="_blank" rel="noopener">What I learned from competing against a ConvNet on ImageNet</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CS231n、DL/" rel="tag"># CS231n、DL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/18/Pytorch-0/" rel="next" title="Pytorch-0">
+                <i class="fa fa-chevron-left"></i> Pytorch-0
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar.png"
+                alt="John Doe" />
+            
+              <p class="site-author-name" itemprop="name">John Doe</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/zhouxincheng" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:zhouxincheng@pku.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://plus.google.com/John David" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/zhou-xin-cheng-1" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#理解和可视化卷积神经网络"><span class="nav-number">1.</span> <span class="nav-text"><a href="#&#x7406;&#x89E3;&#x548C;&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;" class="headerlink" title="&#x7406;&#x89E3;&#x548C;&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;"></a>&#x7406;&#x89E3;&#x548C;&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#可视化卷积神经网络学到的知识"><span class="nav-number">1.1.</span> <span class="nav-text"><a href="#&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x5230;&#x7684;&#x77E5;&#x8BC6;" class="headerlink" title="&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x5230;&#x7684;&#x77E5;&#x8BC6;"></a>&#x53EF;&#x89C6;&#x5316;&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x5230;&#x7684;&#x77E5;&#x8BC6;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#可视化激活值和第一层的权重"><span class="nav-number">1.1.1.</span> <span class="nav-text"><a href="#&#x53EF;&#x89C6;&#x5316;&#x6FC0;&#x6D3B;&#x503C;&#x548C;&#x7B2C;&#x4E00;&#x5C42;&#x7684;&#x6743;&#x91CD;" class="headerlink" title="&#x53EF;&#x89C6;&#x5316;&#x6FC0;&#x6D3B;&#x503C;&#x548C;&#x7B2C;&#x4E00;&#x5C42;&#x7684;&#x6743;&#x91CD;"></a>&#x53EF;&#x89C6;&#x5316;&#x6FC0;&#x6D3B;&#x503C;&#x548C;&#x7B2C;&#x4E00;&#x5C42;&#x7684;&#x6743;&#x91CD;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检索最大程度地激活神经元的图像"><span class="nav-number">1.1.2.</span> <span class="nav-text"><a href="#&#x68C0;&#x7D22;&#x6700;&#x5927;&#x7A0B;&#x5EA6;&#x5730;&#x6FC0;&#x6D3B;&#x795E;&#x7ECF;&#x5143;&#x7684;&#x56FE;&#x50CF;" class="headerlink" title="&#x68C0;&#x7D22;&#x6700;&#x5927;&#x7A0B;&#x5EA6;&#x5730;&#x6FC0;&#x6D3B;&#x795E;&#x7ECF;&#x5143;&#x7684;&#x56FE;&#x50CF;"></a>&#x68C0;&#x7D22;&#x6700;&#x5927;&#x7A0B;&#x5EA6;&#x5730;&#x6FC0;&#x6D3B;&#x795E;&#x7ECF;&#x5143;&#x7684;&#x56FE;&#x50CF;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Embedding-the-codes-with-t-SNE"><span class="nav-number">1.1.3.</span> <span class="nav-text"><a href="#Embedding-the-codes-with-t-SNE" class="headerlink" title="Embedding the codes with t-SNE"></a>Embedding the codes with t-SNE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Occluding-parts-of-the-image"><span class="nav-number">1.1.4.</span> <span class="nav-text"><a href="#Occluding-parts-of-the-image" class="headerlink" title="Occluding parts of the image"></a>Occluding parts of the image</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Visualizing-the-data-gradient-and-friends"><span class="nav-number">1.1.5.</span> <span class="nav-text"><a href="#Visualizing-the-data-gradient-and-friends" class="headerlink" title="Visualizing the data gradient and friends"></a>Visualizing the data gradient and friends</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">John Doe</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://Jason.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2018/03/23/可视化卷积神经网络/';
+          this.page.identifier = '2018/03/23/可视化卷积神经网络/';
+          this.page.title = '可视化卷积神经网络';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://Jason.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
