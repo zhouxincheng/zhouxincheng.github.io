@@ -191,7 +191,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            Startseite
           </a>
         </li>
       
@@ -201,7 +201,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archives
+            Archiv
           </a>
         </li>
       
@@ -224,6 +224,209 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/29/nutch学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/03/29/nutch学习笔记/" itemprop="url">nutch学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-29T10:54:33+08:00">
+                2018-03-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/29/nutch学习笔记/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2018/03/29/nutch学习笔记/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="Nutch-学习笔记"><a href="#Nutch-学习笔记" class="headerlink" title="Nutch 学习笔记"></a>Nutch 学习笔记</h1><h2 id="0-总体环境"><a href="#0-总体环境" class="headerlink" title="0. 总体环境"></a>0. 总体环境</h2><p>需要下载安装配置的环境主要有以下几个：</p>
+<ol>
+<li>Nutch: apache-nutch-1.14</li>
+<li>Solr: solr-4.10.4</li>
+<li>JDK: jdk1.8.0_161</li>
+<li>Ant: 1.10.2</li>
+</ol>
+<h2 id="1-Nutch-简介"><a href="#1-Nutch-简介" class="headerlink" title="1. Nutch 简介"></a>1. Nutch 简介</h2><p>Nutch作为当今最流行的开源爬虫之一，不仅可以运行在单机模式下，还可以运行在分布式模式下。目前Nutch分为两个大版本1.x和2.x，其中，1.x和2.x最大的不同点在于，1.x是基于hadoop的HDFS文件系统的，而2.x将数据的存储层抽象出来，可以将数据保存在Hbase、MySQL等数据库中。从1.3开始，Nutch本身就主要只有爬虫功能，若需要对抓取的数据建立索引并进行搜索，还要用到Solr全文检索服务器。</p>
+<h2 id="2-工作环境"><a href="#2-工作环境" class="headerlink" title="2. 工作环境"></a>2. 工作环境</h2><p>Nutch仅支持在Linux环境下工作，若要在Windows操作系统中使用Nutch，需要安装Cygwin。Cygwin是在Windows下模拟Linux操作系统的软件，它并非一个实际的操作系统。</p>
+<h2 id="3-配置环境"><a href="#3-配置环境" class="headerlink" title="3. 配置环境"></a>3. 配置环境</h2><p>主要包括以下环境配置：</p>
+<ol>
+<li>安装JDK</li>
+<li>安装Ant</li>
+<li>编译Nutch</li>
+</ol>
+<h3 id="3-1-安装JDK"><a href="#3-1-安装JDK" class="headerlink" title="3.1 安装JDK"></a>3.1 安装JDK</h3><p>下载安装JDK，在 ~/.bashrc 设置环境变量，包括以下三行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME=&quot;你的jdk路径&quot;</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">export PATH=$PATH:$JAVA_HOME/bin</span><br></pre></td></tr></table></figure>
+<p>配置完成后记得source ~/.bashrc。</p>
+<h3 id="3-2-安装Ant"><a href="#3-2-安装Ant" class="headerlink" title="3.2 安装Ant"></a>3.2 安装Ant</h3><p>Ant用于编译nutch。下载完ant之后，和配置jdk一般，在 ~/.bashrc 设置环境变量，加入下面两行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export ANT_HOME=&quot;ant所在路径&quot;</span><br><span class="line">export PATH=$PATH:$ANT_HOME/bin</span><br></pre></td></tr></table></figure>
+<p>同样需要source。</p>
+<h3 id="3-3-编译-Nutch"><a href="#3-3-编译-Nutch" class="headerlink" title="3.3 编译 Nutch"></a>3.3 编译 Nutch</h3><p>下载完Nutch之后，打开Nutch的默认配置文件：</p>
+<p><code>vim conf/nutch-default.xml</code></p>
+<p>找到http.agent.name这个属性，将其拷贝到conf/nutch-site.xml中，并修改value，修改后的nutch-site.xml如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;configuration&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">  &lt;name&gt;http.agent.name&lt;/name&gt;</span><br><span class="line">    &lt;value&gt;myNutch&lt;/value&gt;</span><br><span class="line">      &lt;description&gt;HTTP &apos;User-Agent&apos; request header. MUST NOT be empty -</span><br><span class="line">        please set this to a single word uniquely related to your organization.</span><br><span class="line">  NOTE: You should also check other related properties:</span><br><span class="line">    http.robots.agents</span><br><span class="line">        http.agent.description</span><br><span class="line">            http.agent.url</span><br><span class="line">                http.agent.email</span><br><span class="line">                    http.agent.version</span><br><span class="line">  and set their values appropriately.</span><br><span class="line">  &lt;/description&gt;</span><br><span class="line">  &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
+<p>http.agent.name这个属性是用于标记爬虫的，便于被爬的网站对其进行识别。首次编译过程会耗费较多时间，因为需要下载较多的依赖包，还会出现编译警告：Could not load definitions from resource org/sonar/ant/antlib.xml. It could not be found. 以及依赖包速度过慢的情况。使用以下方法解决：</p>
+<ol>
+<li><p>下载 <a href="https://link.jianshu.com/?t=http://repo2.maven.org/maven2/org/codehaus/sonar-plugins/sonar-ant-task/2.2/sonar-ant-task-2.2.jar" target="_blank" rel="noopener">sonar-ant-task-2.2.jar</a>， 将其拷贝到 \${NUTCH_HOME}/lib 目录下面，并修改\${NUTCH_HOME}/build.xml，在<code>&lt;taskdef uri=&quot;antlib:org.sonar.ant&quot; resource=&quot;org/sonar/ant/antlib.xml&quot;&gt;</code><br>下添加<code>&lt;classpath&gt;&lt;fileset dir=&quot;./lib&quot; includes=&quot;sonar*.jar&quot; /&gt;&lt;/classpath&gt;</code></p>
+</li>
+<li><p>可通过修改maven中央库地址来解决，修改${NUTCH_HOME}/ivy/ivysettings.xml中</p>
+<figure class="highlight plain"><figcaption><span>name</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">value=&quot;http://repo1.maven.org/maven2/&quot;    </span><br><span class="line">override=&quot;false&quot;/&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><a href="http://maven.aliyun.com/nexus/content/groups/public/" target="_blank" rel="noopener">value值改为国内阿里云的中央库地址</a>：<a href="http://maven.aliyun.com/nexus/content/groups/public/" target="_blank" rel="noopener">http://maven.aliyun.com/nexus/content/groups/public/</a></p>
+<h4 id="3-3-1-Nutch目录结构"><a href="#3-3-1-Nutch目录结构" class="headerlink" title="3.3.1 Nutch目录结构"></a>3.3.1 Nutch目录结构</h4><p>Nutch编译成功之后，会在主目录下生成一个runtime文件夹。其中包含deploy和local两个子文件夹。deploy用于分布式抓取，而local用于本地单机抓取。</p>
+<h2 id="4-Solr安装与配置"><a href="#4-Solr安装与配置" class="headerlink" title="4. Solr安装与配置"></a>4. Solr安装与配置</h2><p>从1.3开始，Nutch本身就主要只有爬虫功能，若需要对抓取的数据建立索引并进行搜索，还要用到Solr全文检索服务器。由于Nutch和Solr都是基于Lucene开发的，因此Nutch抓取的数据可以轻松地在Solr中建立索引。</p>
+<h3 id="4-1-下载安装Solr"><a href="#4-1-下载安装Solr" class="headerlink" title="4.1 下载安装Solr"></a>4.1 下载安装Solr</h3><p>不同版本的 Nutch 支持的 Solr 的版本不同，我使用的是solr-4.10.4。</p>
+<h3 id="配置Solr"><a href="#配置Solr" class="headerlink" title="配置Solr"></a>配置Solr</h3><p>将Nutch目录下的runtime/local/conf/schema-solr4.xml拷贝到solr的配置文件目录example/solr/collection1/conf下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp apache-nutch-1.10/runtime/local/conf/schema-solr4.xml solr-4.10.4/example/solr/collection1/conf</span><br></pre></td></tr></table></figure>
+<p>删除solr原schema.xml文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm –f solr-4.10.4/example/solr/collection1/conf/schema.xml</span><br></pre></td></tr></table></figure>
+<p>将schema-solr4.xml改名为schema.xml：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv solr-4.10.4/example/solr/collection1/conf/ schema-solr4.xml solr-4.10.4/example/solr/collection1/conf/ schema.xml</span><br></pre></td></tr></table></figure>
+<p>配置完毕后，进入solr-4.10.4/example目录，启动Solr：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java –jar start.jar</span><br></pre></td></tr></table></figure>
+<p>此时就可以通过浏览器访问8983端口，查看Solr的控制界面：<img src="media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.07.20.png" alt="Screen Shot 2018-03-22 at 16.07.20"></p>
+<h2 id="5-相关命令"><a href="#5-相关命令" class="headerlink" title="5. 相关命令"></a>5. 相关命令</h2><h3 id="5-1-Nutch数据文件夹组成"><a href="#5-1-Nutch数据文件夹组成" class="headerlink" title="5.1 Nutch数据文件夹组成"></a>5.1 Nutch数据文件夹组成</h3><p><img src="media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.32.29.png" alt="Screen Shot 2018-03-22 at 16.32.29"><br><img src="media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.32.38.png" alt="Screen Shot 2018-03-22 at 16.32.38"></p>
+<h3 id="5-2-crawl命令"><a href="#5-2-crawl命令" class="headerlink" title="5.2 crawl命令"></a>5.2 crawl命令</h3><p>在<strong>nutch/runtime/local/</strong>里运行 <strong>bin/crawl</strong> 查看相关命令的用法：<br><img src="media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.11.33.png" alt="Screen Shot 2018-03-22 at 16.11.33"></p>
+<p>命令解释：</p>
+<ul>
+<li>-i|index用于告知nutch将抓取的结果添加到配置的索引器中。</li>
+<li>-D用于配置传递给Nutch调用的参数，我们可以将索引器配置到这里</li>
+<li>Seed Dir种子文件目录，用于存放种子URL，即爬虫初始抓取的URL。</li>
+<li>Crawl Dir抓取数据的存放路径。</li>
+<li>Num Rounds循环抓取次数</li>
+</ul>
+<p>例子：<br><figure class="highlight plain"><figcaption><span>-i -D solr.server.url</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">这条命令中，-i告知爬虫将抓取的内容添加到给定的索引中，solr.server.url=http://localhost:8983/solr/ 是Solr索引器的地址，urls/为种子URL文件路径，TestCrawl为Nutch用于存储抓取数据的文件夹（包含URL、抓取的内容等数据），这里的参数2表示循环抓取两次。通过执行上面一条命令，就可以开始抓取网页了。</span><br><span class="line">![Screen Shot 2018-03-22 at 16.27.19](media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.27.19.png)</span><br><span class="line"></span><br><span class="line">### 5.3 nutch命令</span><br><span class="line"></span><br><span class="line">在**nutch/runtime/local/**里运行 **bin/nutch** 查看相关命令的用法：</span><br><span class="line">![Screen Shot 2018-03-22 at 16.13.31](media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.13.31.png)</span><br><span class="line"></span><br><span class="line">重点解释下nutch的几个命令：</span><br></pre></td></tr></table></figure></p>
+<p>readdb: 存取Crwal数据库<br>inject: 将URL列表注入到crawldb中<br>generate: 从数据库（crawldb）里生成一个抓取列表<br>fetch: 根据generate生成的抓取列表抓取网页<br>parse: 解析从fetch中抓取到的网页<br>updatedb: 根据抓取的结果更新数据库<br>invertlinks: 对所有的链接进行反转，这样我们才可以对页面的来源锚文本进行索引<br>index: 将抓取到的数据加入Solr索引<br>dedup: 去除重复URL<br>clean: 从solr移除HTTP301、404以及重复的文档<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 5.4 抓取结果分析</span><br><span class="line"></span><br><span class="line">主要是使用Nutch的readdb，readlinkdb和readseg来对Nutch的数据进行分析</span><br><span class="line"></span><br><span class="line">#### 5.4.1 readdb</span><br><span class="line">用于读取或者导出Nutch的抓取数据库，通常用于查看数据库的状态信息，相关用法：</span><br><span class="line">![Screen Shot 2018-03-29 at 09.54.09](media/15222845003011/Screen%20Shot%202018-03-29%20at%2009.54.09.png)</span><br></pre></td></tr></table></figure></p>
+<p>-stats: 查看统计状态信息<br>-dump: 导出统计信息<br>-url: 查看指定URL的信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![Screen Shot 2018-03-22 at 16.48.32](media/15222845003011/Screen%20Shot%202018-03-22%20at%2016.48.32.png)</span><br><span class="line"></span><br><span class="line">导出crawldb信息： </span><br><span class="line">```bin/nutch readdb data/crawldb -dump crawldb_dump</span><br></pre></td></tr></table></figure></p>
+<p>到处信息大概如下：<br><img src="media/15222845003011/Screen%20Shot%202018-03-29%20at%2010.02.26.png" alt="Screen Shot 2018-03-29 at 10.02.26"></p>
+<h4 id="5-4-2-readlinkdb"><a href="#5-4-2-readlinkdb" class="headerlink" title="5.4.2 readlinkdb"></a>5.4.2 readlinkdb</h4><p>readlinkdb用于导出全部URL和锚文本：<br><img src="media/15222845003011/Screen%20Shot%202018-03-29%20at%2010.04.11.png" alt="Screen Shot 2018-03-29 at 10.04.11"></p>
+<h4 id="5-4-3-readseg"><a href="#5-4-3-readseg" class="headerlink" title="5.4.3 readseg"></a>5.4.3 readseg</h4><p>readseg用于查看或导出segment里面的数据，使用方法：<br><img src="media/15222845003011/Screen%20Shot%202018-03-29%20at%2010.06.25.png" alt="Screen Shot 2018-03-29 at 10.06.25"><br>导出segment数据：<br><figure class="highlight plain"><figcaption><span>readseg -dump data/segments/20180322014457/segment_dump```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">查看 segment_dump 中的导出信息：</span><br><span class="line">```cat segment_dump /*</span><br></pre></td></tr></table></figure></p>
+<p><img src="media/15222845003011/Screen%20Shot%202018-03-29%20at%2010.14.07.png" alt="Screen Shot 2018-03-29 at 10.14.07"></p>
+<h2 id="6-踩过的坑"><a href="#6-踩过的坑" class="headerlink" title="6. 踩过的坑"></a>6. 踩过的坑</h2><ol>
+<li>ant编译时速度太慢，因为库在国外访问耗时，使用阿里库之后解决</li>
+<li>运行 solr 出错，换了个 solr 版本和 nutch 版本</li>
+<li>使用 /etc/profile 配置环境变量时不生效，改成直接写 ~/.bashrc</li>
+</ol>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="https://en.wikipedia.org/wiki/Apache_Nutch" target="_blank" rel="noopener">Apache Nutch</a>: <a href="https://en.wikipedia.org/wiki/Apache_Nutch" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Apache_Nutch</a></p>
+<p><a href="https://www.kancloud.cn/kancloud/step-by-step-nutch/48722" target="_blank" rel="noopener">Nutch 1.10入门教程</a>: <a href="https://www.kancloud.cn/kancloud/step-by-step-nutch/48722" target="_blank" rel="noopener">https://www.kancloud.cn/kancloud/step-by-step-nutch/48722</a></p>
+<p><a href="https://www.jianshu.com/p/dfa269d45f3d" target="_blank" rel="noopener">ant编译问题</a>: <a href="https://www.jianshu.com/p/dfa269d45f3d" target="_blank" rel="noopener">https://www.jianshu.com/p/dfa269d45f3d</a></p>
+<p><a href="https://wiki.apache.org/nutch/CommandLineOptions" target="_blank" rel="noopener">CommandLineOptions - Nutch Wiki</a>: <a href="https://wiki.apache.org/nutch/CommandLineOptions" target="_blank" rel="noopener">https://wiki.apache.org/nutch/CommandLineOptions</a></p>
+<p><a href="https://blog.csdn.net/qiange520/article/details/50515227" target="_blank" rel="noopener">Nutch命令详解</a>: <a href="https://blog.csdn.net/qiange520/article/details/50515227" target="_blank" rel="noopener">https://blog.csdn.net/qiange520/article/details/50515227</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -267,7 +470,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-23T13:42:16+08:00">
                 2018-03-23
@@ -431,7 +634,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-18T23:25:09+08:00">
                 2018-03-18
@@ -569,7 +772,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-16T09:36:29+08:00">
                 2018-03-16
@@ -756,7 +959,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-04T10:56:10+08:00">
                 2018-03-04
@@ -1019,7 +1222,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-23T15:55:07+08:00">
                 2018-02-23
@@ -1245,7 +1448,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-04T13:49:39+08:00">
                 2018-02-04
@@ -1464,7 +1667,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-09T22:03:57+08:00">
                 2017-12-09
@@ -1720,7 +1923,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-12-09T22:00:19+08:00">
                 2017-12-09
@@ -1858,8 +2061,8 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
-                  <span class="site-state-item-name">posts</span>
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">Artikel</span>
                 </a>
               </div>
             
@@ -1871,8 +2074,8 @@
               
               <div class="site-state-item site-state-tags">
                 
-                  <span class="site-state-item-count">5</span>
-                  <span class="site-state-item-name">tags</span>
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">Tags</span>
                 
               </div>
             
@@ -1946,7 +2149,7 @@
 </div>
 
 
-  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+  <div class="powered-by">Erstellt mit  <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
 
 
 
